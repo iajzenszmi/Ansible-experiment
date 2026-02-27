@@ -1,0 +1,1479 @@
+You said:
+Ansible demo script
+
+ChatGPT said:
+
+Here’s a clean, reproducible Ansible demo you can run on your Ubuntu/UserLAnd setup (similar to how you run your Fortran and Rust demos).
+
+This example:
+
+    Installs nginx
+
+    Creates a custom HTML page
+
+    Starts and enables the service
+
+    Demonstrates idempotence (safe repeated runs)
+
+1️⃣ Install Ansible (Ubuntu / UserLAnd / WSL)
+
+sudo apt update
+sudo apt install -y ansible
+ansible --version
+
+2️⃣ Minimal Inventory (Localhost Demo)
+
+Create inventory.ini
+
+[local]
+localhost ansible_connection=local
+
+3️⃣ Demo Playbook
+
+Create demo.yml
+
+---
+- name: Ansible Demo - Install and Configure Nginx
+  hosts: local
+  become: yes
+
+  vars:
+    demo_message: "Hello Ian - Ansible is working on this machine."
+
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Create custom index page
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head><title>Ansible Demo</title></head>
+          <body>
+          <h1>{{ demo_message }}</h1>
+          <p>Configured via Ansible automation.</p>
+          </body>
+          </html>
+
+    - name: Ensure nginx is started
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+4️⃣ Run the Demo
+
+ansible-playbook -i inventory.ini demo.yml
+
+Then open:
+
+http://localhost
+
+You should see your custom message.
+
+Run it again — notice no changes (idempotent behavior).
+5️⃣ Hardened Script Version (Auto Setup)
+
+If you prefer your usual “single executable script” style:
+
+Create ansible_demo.sh
+
+#!/bin/bash
+
+set -e
+
+echo "==> Installing Ansible..."
+sudo apt update
+sudo apt install -y ansible nginx
+
+echo "==> Writing inventory..."
+cat > inventory.ini <<EOF
+[local]
+localhost ansible_connection=local
+EOF
+
+echo "==> Writing playbook..."
+cat > demo.yml <<EOF
+---
+- name: Ansible Demo - Nginx
+  hosts: local
+  become: yes
+  tasks:
+    - apt:
+        update_cache: yes
+
+    - apt:
+        name: nginx
+        state: present
+
+    - copy:
+        dest: /var/www/html/index.html
+        content: "Ansible demo running successfully."
+
+    - service:
+        name: nginx
+        state: started
+        enabled: yes
+EOF
+
+echo "==> Running playbook..."
+ansible-playbook -i inventory.ini demo.yml
+
+echo "==> Done."
+
+Make executable:
+
+chmod u+x ansible_demo.sh
+./ansible_demo.sh
+
+6️⃣ Advanced Demo (For You Specifically)
+
+Since you’re interested in:
+
+    Automation
+
+    Infrastructure reproducibility
+
+    HPC / scientific systems
+
+    Multi-language builds
+
+We can next build:
+
+    Ansible role to deploy a Fortran 77 toolchain
+
+    Deploy a Rust + SDL2 environment
+
+    Provision a Docker container for your vortex simulator
+
+    Configure a cluster node for meteorological simulations
+
+If you’d like, I can now provide:
+
+    🔹 Ansible + Docker deployment demo
+
+    🔹 Ansible cluster/HPC mini-lab
+
+    🔹 Ansible + Rust build automation
+
+    🔹 Ansible for aged-care facility device provisioning (interesting real-world case)
+
+Which direction do you want to go, Ian?
+
+You said:
+Ansible cluster/HPC mini-lab
+
+ChatGPT said:
+
+Below is a self-contained “HPC mini-lab” you can run on a single machine using Docker containers as cluster nodes, and Ansible to provision them. It gives you a working “head + compute” setup and proves it by running an MPI job across nodes.
+
+This is the most reliable “mini-cluster” approach when you don’t have real VMs.
+What you’ll get
+
+    1 head node, 2 compute nodes (easy to scale)
+
+    SSH between nodes (key-based, no passwords)
+
+    OpenMPI installed everywhere
+
+    A compiled mpi_hello program shared to all nodes
+
+    mpirun launched from head across compute nodes
+
+0) Prereqs
+
+sudo apt update
+sudo apt install -y docker.io docker-compose ansible
+sudo usermod -aG docker "$USER"
+# log out/in once if docker permission errors
+
+Test:
+
+docker --version
+ansible --version
+
+1) Create the lab folder
+
+mkdir -p hpc-lab/{ansible,node_image,shared}
+cd hpc-lab
+
+2) Build a simple “cluster node” image (sshd + sudo)
+
+Create node_image/Dockerfile
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    openssh-server sudo python3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /var/run/sshd
+
+# Create ansible admin user (passwordless sudo)
+RUN useradd -m -s /bin/bash ansible \
+    && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible \
+    && chmod 440 /etc/sudoers.d/ansible
+
+# Allow ssh key auth
+RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
+ && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config \
+ && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D","-e"]
+
+3) Bring up 3 nodes with Docker Compose
+
+Create compose.yml in hpc-lab/
+
+services:
+  head:
+    build: ./node_image
+    container_name: hpc-head
+    hostname: head
+    ports:
+      - "2221:22"
+    volumes:
+      - ./shared:/shared
+
+  compute1:
+    build: ./node_image
+    container_name: hpc-compute1
+    hostname: compute1
+    ports:
+      - "2222:22"
+    volumes:
+      - ./shared:/shared
+
+  compute2:
+    build: ./node_image
+    container_name: hpc-compute2
+    hostname: compute2
+    ports:
+      - "2223:22"
+    volumes:
+      - ./shared:/shared
+
+Start it:
+
+docker compose up -d --build
+docker ps
+
+4) Ansible inventory + config
+
+Create ansible/ansible.cfg
+
+[defaults]
+inventory = inventory.ini
+host_key_checking = False
+retry_files_enabled = False
+timeout = 30
+interpreter_python = auto
+
+Create ansible/inventory.ini
+
+[head]
+head ansible_host=127.0.0.1 ansible_port=2221 ansible_user=ansible
+
+[compute]
+compute1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=ansible
+compute2 ansible_host=127.0.0.1 ansible_port=2223 ansible_user=ansible
+
+[cluster:children]
+head
+compute
+
+5) Bootstrap SSH access from your machine to containers
+
+We need an SSH key on your machine so Ansible can log in.
+
+mkdir -p ~/.ssh
+test -f ~/.ssh/id_ed25519 || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+
+Now copy your public key into each container’s ansible user:
+
+for p in 2221 2222 2223; do
+  ssh -o StrictHostKeyChecking=no -p $p ansible@127.0.0.1 "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+  cat ~/.ssh/id_ed25519.pub | ssh -p $p ansible@127.0.0.1 "cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+done
+
+Quick ping test:
+
+cd ansible
+ansible all -m ping
+
+6) The HPC provisioning playbook (OpenMPI + shared build + hostfile)
+
+Create ansible/hpc.yml
+
+---
+- name: HPC mini-lab (MPI over SSH)
+  hosts: cluster
+  become: yes
+
+  vars:
+    mpi_packages:
+      - build-essential
+      - openmpi-bin
+      - libopenmpi-dev
+      - openssh-client
+      - openssh-server
+
+  tasks:
+    - name: Install MPI toolchain and SSH
+      apt:
+        update_cache: yes
+        name: "{{ mpi_packages }}"
+        state: present
+
+    - name: Create mpi user
+      user:
+        name: mpi
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Allow mpi passwordless sudo (demo convenience)
+      copy:
+        dest: /etc/sudoers.d/mpi
+        content: "mpi ALL=(ALL) NOPASSWD:ALL\n"
+        mode: "0440"
+
+    - name: Ensure shared dir exists
+      file:
+        path: /shared
+        state: directory
+        mode: "0777"
+
+- name: Configure key-based SSH for MPI (head -> all)
+  hosts: head
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Generate SSH key for mpi on head (if missing)
+      command: sudo -u mpi ssh-keygen -t ed25519 -N "" -f /home/mpi/.ssh/id_ed25519
+      args:
+        creates: /home/mpi/.ssh/id_ed25519
+
+    - name: Read mpi public key
+      slurp:
+        src: /home/mpi/.ssh/id_ed25519.pub
+      register: mpi_pub
+
+    - name: Write cluster hostfile for MPI
+      copy:
+        dest: /shared/hostfile
+        content: |
+          compute1 slots=1
+          compute2 slots=1
+        mode: "0644"
+
+    - name: Write MPI hello program (C)
+      copy:
+        dest: /shared/mpi_hello.c
+        content: |
+          #include <mpi.h>
+          #include <stdio.h>
+          int main(int argc, char** argv) {
+            MPI_Init(&argc, &argv);
+            int rank, size;
+            MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+            MPI_Comm_size(MPI_COMM_WORLD, &size);
+            char name[MPI_MAX_PROCESSOR_NAME];
+            int len = 0;
+            MPI_Get_processor_name(name, &len);
+            printf("Hello from rank %d of %d on %s\n", rank, size, name);
+            MPI_Finalize();
+            return 0;
+          }
+
+    - name: Compile MPI program on head into /shared
+      command: mpicc /shared/mpi_hello.c -O2 -o /shared/mpi_hello
+      args:
+        creates: /shared/mpi_hello
+
+- name: Authorize head mpi key on all nodes
+  hosts: cluster
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Add head mpi public key to authorized_keys
+      authorized_key:
+        user: mpi
+        key: "{{ hostvars['head'].mpi_pub.content | b64decode }}"
+        state: present
+
+    - name: Disable StrictHostKeyChecking for mpi (demo convenience)
+      copy:
+        dest: /home/mpi/.ssh/config
+        owner: mpi
+        group: mpi
+        mode: "0600"
+        content: |
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
+
+Run it:
+
+ansible-playbook -i inventory.ini hpc.yml
+
+7) Run the MPI job across the “cluster”
+
+Enter the head node and run:
+
+docker exec -it hpc-head bash
+sudo -u mpi bash -lc 'mpirun --hostfile /shared/hostfile -np 2 /shared/mpi_hello'
+
+Expected output looks like:
+
+    Hello from rank 0 of 2 on compute1
+
+    Hello from rank 1 of 2 on compute2
+
+(Exact hostnames may vary, but you should see two different nodes.)
+8) Scaling up (more compute nodes)
+
+Add compute3, compute4 to compose.yml, expose ports 2224, 2225, then update:
+
+    ansible/inventory.ini (add those computes)
+
+    /shared/hostfile content in the playbook
+
+Re-run docker compose up -d --build then ansible-playbook ...
+Next step options (pick one, I’ll give the full build)
+
+    Add a job queue: Slurm mini-lab (controller + slurmd nodes) on top of this
+
+    Add shared storage properly: NFS (best done with VMs or LXD, but I can give both ways)
+
+    Add monitoring: node health, load, and simple dashboard (Prometheus/Grafana)
+
+If you want Slurm, tell me: do you prefer Docker-only (fast demo) or VM-based (more realistic HPC)?
+
+You said:
+script to build and run Ansible cluster/HPC mini-lab
+
+ChatGPT said:
+
+#!/bin/bash
+# hpc_minilab.sh
+# Build + run an Ansible-provisioned "HPC mini-lab" using Docker containers as nodes.
+# Creates: 1 head node + 2 compute nodes, installs OpenMPI everywhere, sets up SSH (head->all),
+# compiles an MPI hello-world into /shared, then runs mpirun across compute nodes.
+
+set -euo pipefail
+
+LAB_DIR="${HOME}/hpc-lab"
+ANS_DIR="${LAB_DIR}/ansible"
+IMG_DIR="${LAB_DIR}/node_image"
+SHARED_DIR="${LAB_DIR}/shared"
+
+need_cmd() { command -v "$1" >/dev/null 2>&1 || return 1; }
+
+echo "==> [1/9] Checking/Installing prerequisites..."
+if need_cmd apt-get; then
+  sudo apt-get update -y
+  sudo apt-get install -y docker.io docker-compose ansible openssh-client
+else
+  echo "ERROR: apt-get not found. This script expects Debian/Ubuntu (e.g., UserLAnd Ubuntu)."
+  exit 1
+fi
+
+# Ensure docker service is running if systemd exists (often not in containers/UserLAnd).
+if need_cmd systemctl; then
+  sudo systemctl enable --now docker || true
+fi
+
+if ! need_cmd docker; then
+  echo "ERROR: docker not available after install."
+  exit 1
+fi
+
+# docker compose plugin vs docker-compose binary
+DOCKER_COMPOSE=""
+if docker compose version >/dev/null 2>&1; then
+  DOCKER_COMPOSE="docker compose"
+elif need_cmd docker-compose; then
+  DOCKER_COMPOSE="docker-compose"
+else
+  echo "ERROR: neither 'docker compose' nor 'docker-compose' is available."
+  exit 1
+fi
+
+echo "==> [2/9] Creating lab directory structure at: ${LAB_DIR}"
+mkdir -p "${ANS_DIR}" "${IMG_DIR}" "${SHARED_DIR}"
+
+echo "==> [3/9] Writing Docker node image (sshd + sudo + python3)..."
+cat > "${IMG_DIR}/Dockerfile" <<'DOCKERFILE'
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    openssh-server sudo python3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /var/run/sshd
+
+# Ansible admin user (passwordless sudo)
+RUN useradd -m -s /bin/bash ansible \
+    && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible \
+    && chmod 440 /etc/sudoers.d/ansible
+
+# SSH config: key auth only
+RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
+ && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config \
+ && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D","-e"]
+DOCKERFILE
+
+echo "==> [4/9] Writing docker compose cluster (head + compute1 + compute2)..."
+cat > "${LAB_DIR}/compose.yml" <<'YAML'
+services:
+  head:
+    build: ./node_image
+    container_name: hpc-head
+    hostname: head
+    ports:
+      - "2221:22"
+    volumes:
+      - ./shared:/shared
+
+  compute1:
+    build: ./node_image
+    container_name: hpc-compute1
+    hostname: compute1
+    ports:
+      - "2222:22"
+    volumes:
+      - ./shared:/shared
+
+  compute2:
+    build: ./node_image
+    container_name: hpc-compute2
+    hostname: compute2
+    ports:
+      - "2223:22"
+    volumes:
+      - ./shared:/shared
+YAML
+
+echo "==> [5/9] Writing Ansible config + inventory..."
+cat > "${ANS_DIR}/ansible.cfg" <<'CFG'
+[defaults]
+inventory = inventory.ini
+host_key_checking = False
+retry_files_enabled = False
+timeout = 30
+interpreter_python = auto
+CFG
+
+cat > "${ANS_DIR}/inventory.ini" <<'INV'
+[head]
+head ansible_host=127.0.0.1 ansible_port=2221 ansible_user=ansible
+
+[compute]
+compute1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=ansible
+compute2 ansible_host=127.0.0.1 ansible_port=2223 ansible_user=ansible
+
+[cluster:children]
+head
+compute
+INV
+
+echo "==> [6/9] Writing Ansible playbook (OpenMPI + SSH + shared MPI program)..."
+cat > "${ANS_DIR}/hpc.yml" <<'PLAY'
+---
+- name: HPC mini-lab (MPI over SSH) - base packages
+  hosts: cluster
+  become: yes
+
+  vars:
+    mpi_packages:
+      - build-essential
+      - openmpi-bin
+      - libopenmpi-dev
+      - openssh-client
+      - openssh-server
+
+  tasks:
+    - name: Install MPI toolchain and SSH
+      apt:
+        update_cache: yes
+        name: "{{ mpi_packages }}"
+        state: present
+
+    - name: Create mpi user
+      user:
+        name: mpi
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Allow mpi passwordless sudo (demo convenience)
+      copy:
+        dest: /etc/sudoers.d/mpi
+        content: "mpi ALL=(ALL) NOPASSWD:ALL\n"
+        mode: "0440"
+
+    - name: Ensure /shared exists (bind-mounted)
+      file:
+        path: /shared
+        state: directory
+        mode: "0777"
+
+- name: Configure key-based SSH for MPI (head -> all)
+  hosts: head
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Generate SSH key for mpi on head (if missing)
+      command: sudo -u mpi ssh-keygen -t ed25519 -N "" -f /home/mpi/.ssh/id_ed25519
+      args:
+        creates: /home/mpi/.ssh/id_ed25519
+
+    - name: Read mpi public key
+      slurp:
+        src: /home/mpi/.ssh/id_ed25519.pub
+      register: mpi_pub
+
+    - name: Write cluster hostfile for MPI
+      copy:
+        dest: /shared/hostfile
+        content: |
+          compute1 slots=1
+          compute2 slots=1
+        mode: "0644"
+
+    - name: Write MPI hello program (C)
+      copy:
+        dest: /shared/mpi_hello.c
+        content: |
+          #include <mpi.h>
+          #include <stdio.h>
+          int main(int argc, char** argv) {
+            MPI_Init(&argc, &argv);
+            int rank, size;
+            MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+            MPI_Comm_size(MPI_COMM_WORLD, &size);
+            char name[MPI_MAX_PROCESSOR_NAME];
+            int len = 0;
+            MPI_Get_processor_name(name, &len);
+            printf("Hello from rank %d of %d on %s\n", rank, size, name);
+            MPI_Finalize();
+            return 0;
+          }
+
+    - name: Compile MPI program on head into /shared
+      command: mpicc /shared/mpi_hello.c -O2 -o /shared/mpi_hello
+      args:
+        creates: /shared/mpi_hello
+
+- name: Authorize head mpi key on all nodes
+  hosts: cluster
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Add head mpi public key to authorized_keys
+      authorized_key:
+        user: mpi
+        key: "{{ hostvars['head'].mpi_pub.content | b64decode }}"
+        state: present
+
+    - name: Disable StrictHostKeyChecking for mpi (demo convenience)
+      copy:
+        dest: /home/mpi/.ssh/config
+        owner: mpi
+        group: mpi
+        mode: "0600"
+        content: |
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
+PLAY
+
+echo "==> [7/9] Building and starting the cluster containers..."
+cd "${LAB_DIR}"
+${DOCKER_COMPOSE} -f compose.yml up -d --build
+
+echo "==> Waiting briefly for sshd to come up on nodes..."
+sleep 2
+
+echo "==> [8/9] Setting up SSH key on THIS machine for Ansible -> containers..."
+mkdir -p "${HOME}/.ssh"
+if [ ! -f "${HOME}/.ssh/id_ed25519" ]; then
+  ssh-keygen -t ed25519 -N "" -f "${HOME}/.ssh/id_ed25519"
+fi
+
+echo "==> Installing your public key into each container's ansible account..."
+for p in 2221 2222 2223; do
+  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$p" ansible@127.0.0.1 \
+    "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+  cat "${HOME}/.ssh/id_ed25519.pub" | \
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$p" ansible@127.0.0.1 \
+    "cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+done
+
+echo "==> Sanity: Ansible ping all nodes..."
+cd "${ANS_DIR}"
+ansible all -m ping
+
+echo "==> [9/9] Running the Ansible HPC provisioning playbook..."
+ansible-playbook hpc.yml
+
+echo
+echo "==> Running MPI test across compute nodes (from head)..."
+cd "${LAB_DIR}"
+docker exec -it hpc-head bash -lc \
+  "sudo -u mpi bash -lc 'mpirun --hostfile /shared/hostfile -np 2 /shared/mpi_hello'"
+
+echo
+echo "==> SUCCESS: HPC mini-lab built, provisioned, and MPI job executed."
+echo "    Lab folder: ${LAB_DIR}"
+echo "    To stop:    cd ${LAB_DIR} && ${DOCKER_COMPOSE} -f compose.yml down"
+
+How to run it
+
+chmod u+x hpc_minilab.sh
+./hpc_minilab.sh
+
+Notes (common gotchas)
+
+    If you get permission denied talking to Docker, run:
+
+    sudo usermod -aG docker "$USER"
+
+    then log out/in (or start a new shell/session) and rerun the script.
+
+If you want, I can give a Slurm-on-top script next (controller + slurmd) using the same containers, so you can submit a job with sbatch instead of running mpirun manually.
+
+You said:
+Ansible cluster/HPC mini-labAnsible cluster/HPC mini-labAnsible cluster/HPC mini-labian@ian-HP-Convertible-x360-11-ab1XX:~$ sudo ./hpc_minilab.sh
+==> [1/9] Checking/Installing prerequisites...
+Hit:1 http://au.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://au.archive.ubuntu.com/ubuntu jammy-updates InRelease              
+Hit:3 http://au.archive.ubuntu.com/ubuntu jammy-backports InRelease            
+Hit:4 http://dl.google.com/linux/earth/deb stable InRelease                    
+Hit:5 https://packages.microsoft.com/repos/edge stable InRelease               
+Hit:6 https://packages.microsoft.com/repos/code stable InRelease               
+Hit:7 https://dl.google.com/linux/chrome/deb stable InRelease
+Hit:8 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ansible is already the newest version (2.10.7+merged+base+2.10.8+dfsg-1).
+docker-compose is already the newest version (1.29.2-1).
+openssh-client is already the newest version (1:8.9p1-3ubuntu0.13).
+docker.io is already the newest version (28.2.2-0ubuntu1~22.04.1).
+The following packages were automatically installed and are no longer required:
+  at augeas-lenses base58 bsdmainutils bumps-private-libs cpu-checker
+  cups-browsed cups-daemon cups-ipp-utils cups-server-common cysignals-tools
+  deap-doc dmeventd docutils-common ecl extlinux fflas-ffpack
+  fflas-ffpack-common fltk1.3-doc fluid fonts-dejavu fonts-linuxlibertine
+  fonts-noto-core fonts-noto-extra fonts-noto-ui-core gir1.2-dbusmenu-glib-0.4
+  gir1.2-dee-1.0 gir1.2-goa-1.0 gir1.2-gtksource-4 gir1.2-keybinder-3.0
+  gir1.2-snapd-1 gir1.2-unity-7.0 gir1.2-wnck-3.0 glpk-utils hfsplus
+  hplip-data icoutils ipxe-qemu ipxe-qemu-256k-compat-efi-roms jmol
+  jupyter-nbextension-jupyter-js-widgets kpartx ldap-utils ldmtool libaio1
+  libarpack2-dev libatlas-ecmwf-0 libatomic-ops-dev libaugeas0 libbde1
+  libboost-chrono-dev libboost-filesystem-dev libboost-math-dev
+  libboost-python1.74.0 libboost-serialization-dev libboost-timer-dev
+  libbraiding-dev libbraiding0 libbrial-dev libbrial-groebner-dev
+  libbrotli1:i386 libbsd0:i386 libbsh-java libcacard0 libcairo2:i386
+  libcdd-dev libcdd-doc libcdd-tools libcliquer-dev libcommons-lang-java
+  libcreg1 libcupsimage2 libdaxctl1 libdeflate0:i386 libdevmapper-event1.02.1
+  libdolfin-dev-common libdolfin2019.2 libdraco4 libdsdp-5.8gf libec-dev
+  libeccodes-dev libecl-dev libecm-dev libecm1-dev libecm1-dev-common
+  libegl1-mesa libemos0d libesedb1 libevt1 libevtx1 libexec-maven-plugin-java
+  libexpat1:i386 libfckit0d libffi8:i386 libflashrom1 libflint-arb-dev
+  libflint-arb2 libflint-dev libfltk-cairo1.3 libfltk-forms1.3 libfltk1.3-dev
+  libfontconfig1:i386 libfontembed1 libfplll-dev libfreetype6:i386 libfsapfs1
+  libfsext1 libfshfs1 libfsntfs1 libfsverity0 libfsxfs1 libftdi1-2 libfvde1
+  libfwnt1 libfwsi1 libgc-dev libgd-dev libgf2x-dev libgfapi0 libgfrpc0
+  libgfxdr0 libgiac-dev libgit2-1.1 libgivaro-dev libgl1-mesa-glx libglpk-dev
+  libglusterfs0 libgrib2c-dev libgsl-dev libguestfs-hfsplus
+  libguestfs-reiserfs libguestfs-xfs libguestfs0 libhdf5-mpi-dev
+  libhdf5-openmpi-cpp-103-1 libhdf5-openmpi-dev libhdf5-openmpi-fortran-102
+  libhdf5-openmpi-hl-100 libhdf5-openmpi-hl-cpp-100
+  libhdf5-openmpi-hl-fortran-100 libhfsp0 libhivex0 libhomfly-dev libhomfly0
+  libhpmud0 libhypre-dev libiml-dev libiml0 libinchi1 libiscsi7 libjbig0:i386
+  libjmol-java libjni-inchi-java libjni-inchi-jni libjpeg-turbo8:i386
+  libjpeg8:i386 libjs-backbone libjs-bootstrap-tour libjs-codemirror
+  libjs-es6-promise libjs-jed libjs-jquery-typeahead libjs-marked libjs-moment
+  libjs-requirejs libjs-requirejs-text libjs-text-encoding libjs-xterm
+  libkeybinder-3.0-0 liblaszip8 liblcms2-2:i386 libldm-1.0-0 liblfunction-dev
+  liblinbox-1.7.0-0 liblinbox-dev liblnk1 liblouisutdml-bin liblouisutdml-data
+  liblouisutdml9 liblrcalc-dev libluksde1 liblvm2cmd2.03 liblzf1 libm4ri-dev
+  libm4rie-0.0.20200125 libm4rie-dev libmaven-compiler-plugin-java
+  libmaven-shared-incremental-java libmbedtls14 libmbedx509-1 libmd0:i386
+  libmetview0d libmodplug1 libmpdec3:i386 libmsiecf1 libmtp-common
+  libmtp-runtime libmtp9 libnaga-java libndctl6 libnetcdf-c++4 libnetplan0
+  libnfs13 libnorm-dev libnspr4:i386 libnss3:i386 libolecf1 libopenjp2-7:i386
+  libopusfile0 libparpack2-dev libpdal-base13 libpdal-plugin-draco
+  libpdal-plugin-e57 libpdal-plugin-faux libpdal-plugin-hdf libpdal-plugin-i3s
+  libpdal-plugin-icebridge libpdal-plugin-pgpointcloud libpdal-plugins
+  libpdal-util13 libpetsc3.15-dev-common libpetsc3.15-dev-examples libpgm-dev
+  libpixman-1-0:i386 libplanarity-dev libplexus-compiler-java
+  libplexus-container-default-java libplexus-languages-java libpmem1
+  libpmemobj1 libpng16-16:i386 libpoppler-cpp0v5 libpoppler118:i386
+  libportmidi0 libppl-c4 libppl-dev libppl14 libprimecount7 libprimesieve9
+  libpython3-stdlib:i386 libpython3.10-minimal:i386 libpython3.10-stdlib:i386
+  libqcow1 libqdox2-java libqpdf28 libqt5location5 libqt5opengl5
+  libqt5positioningquick5 libqt5quickwidgets5 libqt5serialport5
+  libqt5webengine-data libqt5webengine5 libqt5webenginecore5
+  libqt5webenginewidgets5 libqt5websockets5 libqt5xmlpatterns5
+  libratpoints-2.1.3 libratpoints-dev librbd1 libre2-9 libreadline8:i386
+  libregf1 libreoffice-nlpsolver libreoffice-script-provider-bsh
+  libreoffice-script-provider-js libreoffice-wiki-publisher librpmbuild9
+  librpmsign9 librw-dev librw0 libsane-hpaio libscca1 libsdl2-image-2.0-0
+  libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libsigscan1 libsingular4-dev
+  libsingular4-dev-common libslirp0 libsmdev1 libsmraw1 libsodium-dev
+  libspice-server1 libsqlite3-0:i386 libstdc++6:i386 libsuperlu-dev
+  libsuperlu-dist-dev libsymmetrica2 libsymmetrica2-dev libtiff5:i386
+  libtrilinos-aztecoo-dev libtrilinos-ml-dev libtrilinos-trilinosss-dev
+  libtrilinos-zoltan-dev libusbredirparser1 libvirglrenderer1 libvirt0
+  libvpx-dev libvshadow1 libvslvm1 libvtk7.1p libvtk7.1p-qt libwebp7:i386
+  libwmf0.2-7 libwnck-3-0 libwnck-3-common libwpe-1.0-1
+  libwpebackend-fdo-1.0-1 libx11-6:i386 libxau6:i386 libxbean-reflect-java
+  libxcb-cursor0 libxcb-render0:i386 libxcb-shm0:i386 libxcb-xtest0
+  libxcb1:i386 libxdmcp6:i386 libxext6:i386 libxml2-dev libxrender1:i386
+  libyaml-dev libz3-4 libz3-dev libzmq3-dev libzn-poly-0.9 libzn-poly-dev
+  linux-headers-6.2.0-33-generic linux-headers-6.2.0-34-generic
+  linux-headers-6.2.0-35-generic linux-headers-6.2.0-36-generic
+  linux-hwe-6.2-headers-6.2.0-33 linux-hwe-6.2-headers-6.2.0-34
+  linux-hwe-6.2-headers-6.2.0-35 linux-hwe-6.2-headers-6.2.0-36
+  linux-image-6.2.0-33-generic linux-image-6.2.0-34-generic
+  linux-image-6.2.0-35-generic linux-image-6.2.0-36-generic
+  linux-modules-6.2.0-33-generic linux-modules-6.2.0-34-generic
+  linux-modules-6.2.0-35-generic linux-modules-6.2.0-36-generic
+  linux-modules-extra-6.2.0-33-generic linux-modules-extra-6.2.0-34-generic
+  linux-modules-extra-6.2.0-35-generic linux-modules-extra-6.2.0-36-generic
+  lsscsi lvm2 metview-data msr-tools ncal node-jed numba-doc
+  ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers osinfo-db ovmf
+  paraview-doc ppl-dev primecount-bin primesieve-bin
+  printer-driver-postscript-hp ps2eps pybind11-dev python-gmpy2-common
+  python-mako-doc python-odf-doc python-petsc4py-doc python-ppl-doc
+  python-pyopencl-doc python-tables-data python3-aiofiles python3-ajpy
+  python3-alabaster python3-aniso8601 python3-ansimarkup python3-artifacts
+  python3-asciitree python3-asn1crypto python3-async-timeout python3-automat
+  python3-base58 python3-bleach python3-cloudpickle python3-constantly
+  python3-debconf python3-dfdatetime python3-docutils python3-dropbox
+  python3-ecdsa python3-elasticsearch python3-et-xmlfile python3-fasteners
+  python3-fastimport python3-flatbuffers python3-fsspec python3-fusepy
+  python3-future python3-graphene python3-graphql-core python3-graphql-relay
+  python3-hamcrest python3-heapdict python3-hyperlink python3-imagesize
+  python3-incremental python3-ipy python3-isodatetime python3-itsdangerous
+  python3-jdcal python3-joblib python3-jupyterlab-pygments python3-ldap3
+  python3-ldapdomaindump python3-locket python3-louis python3-mnemonic
+  python3-mock python3-monotonic python3-mutagen python3-networkx python3-nose
+  python3-odf python3-opengl python3-pandocfilters python3-partd
+  python3-passlib python3-pbr python3-pefile python3-pkgconfig python3-png
+  python3-prometheus-client python3-promise python3-pyasn1
+  python3-pyasn1-modules python3-pybind11 python3-pycparser python3-pydot
+  python3-pyinotify python3-pyperclip python3-pyqrcode python3-pyshp
+  python3-pysmi python3-redis python3-roman python3-rx python3-send2trash
+  python3-snowballstemmer python3-sortedcontainers python3-speechd
+  python3-stone python3-suds python3-tblib python3-testpath
+  python3-threadpoolctl python3-tld python3-toolz python3-trie python3-tzlocal
+  python3-u-msgpack python3-websockets python3-werkzeug python3-xdg
+  python3-xkit python3-xlrd python3-xlsxwriter python3-xlwt python3-yaswfp
+  python3-zict qemu-block-extra qemu-system-common qemu-system-data
+  qemu-system-gui qemu-system-x86 qemu-utils qtbase5-dev-tools qtchooser
+  sagemath-doc sasmodels-private-libs scrub seabios sphinx-common supermin
+  swig swig4.0 syslinux syslinux-common texlive-font-utils
+  thin-provisioning-tools trilinos-dev valgrind valgrind-mpi x11-apps
+  x11-session-utils xbrlapi xinit yasm zerofree
+Use 'sudo apt autoremove' to remove them.
+0 to upgrade, 0 to newly install, 0 to remove and 54 not to upgrade.
+==> [2/9] Creating lab directory structure at: /root/hpc-lab
+==> [3/9] Writing Docker node image (sshd + sudo + python3)...
+==> [4/9] Writing docker compose cluster (head + compute1 + compute2)...
+==> [5/9] Writing Ansible config + inventory...
+==> [6/9] Writing Ansible playbook (OpenMPI + SSH + shared MPI program)...
+==> [7/9] Building and starting the cluster containers...
+Creating network "hpc-lab_default" with the default driver
+Building head
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   2.56kB
+Step 1/8 : FROM ubuntu:22.04
+Head "https://registry-1.docker.io/v2/library/ubuntu/manifests/22.04": Get "https://auth.docker.io/token?scope=repository%3Alibrary%2Fubuntu%3Apull&service=registry.docker.io": dial tcp [2a06:98c1:3105::ac40:904e]:443: connect: network is unreachable
+ERROR: Service 'head' failed to build : Build failed
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ Ansible cluster/HPC mini-lab
+
+You said:
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ sudo ./hpc_minilab.sh
+==> [1/9] Checking/Installing prerequisites...
+Hit:1 http://au.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://au.archive.ubuntu.com/ubuntu jammy-updates InRelease              
+Hit:3 http://au.archive.ubuntu.com/ubuntu jammy-backports InRelease            
+Hit:4 http://dl.google.com/linux/earth/deb stable InRelease                    
+Hit:5 https://packages.microsoft.com/repos/edge stable InRelease               
+Hit:6 https://packages.microsoft.com/repos/code stable InRelease               
+Hit:7 https://dl.google.com/linux/chrome/deb stable InRelease
+Hit:8 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ansible is already the newest version (2.10.7+merged+base+2.10.8+dfsg-1).
+docker-compose is already the newest version (1.29.2-1).
+openssh-client is already the newest version (1:8.9p1-3ubuntu0.13).
+docker.io is already the newest version (28.2.2-0ubuntu1~22.04.1).
+The following packages were automatically installed and are no longer required:
+  at augeas-lenses base58 bsdmainutils bumps-private-libs cpu-checker
+  cups-browsed cups-daemon cups-ipp-utils cups-server-common cysignals-tools
+  deap-doc dmeventd docutils-common ecl extlinux fflas-ffpack
+  fflas-ffpack-common fltk1.3-doc fluid fonts-dejavu fonts-linuxlibertine
+  fonts-noto-core fonts-noto-extra fonts-noto-ui-core gir1.2-dbusmenu-glib-0.4
+  gir1.2-dee-1.0 gir1.2-goa-1.0 gir1.2-gtksource-4 gir1.2-keybinder-3.0
+  gir1.2-snapd-1 gir1.2-unity-7.0 gir1.2-wnck-3.0 glpk-utils hfsplus
+  hplip-data icoutils ipxe-qemu ipxe-qemu-256k-compat-efi-roms jmol
+  jupyter-nbextension-jupyter-js-widgets kpartx ldap-utils ldmtool libaio1
+  libarpack2-dev libatlas-ecmwf-0 libatomic-ops-dev libaugeas0 libbde1
+  libboost-chrono-dev libboost-filesystem-dev libboost-math-dev
+  libboost-python1.74.0 libboost-serialization-dev libboost-timer-dev
+  libbraiding-dev libbraiding0 libbrial-dev libbrial-groebner-dev
+  libbrotli1:i386 libbsd0:i386 libbsh-java libcacard0 libcairo2:i386
+  libcdd-dev libcdd-doc libcdd-tools libcliquer-dev libcommons-lang-java
+  libcreg1 libcupsimage2 libdaxctl1 libdeflate0:i386 libdevmapper-event1.02.1
+  libdolfin-dev-common libdolfin2019.2 libdraco4 libdsdp-5.8gf libec-dev
+  libeccodes-dev libecl-dev libecm-dev libecm1-dev libecm1-dev-common
+  libegl1-mesa libemos0d libesedb1 libevt1 libevtx1 libexec-maven-plugin-java
+  libexpat1:i386 libfckit0d libffi8:i386 libflashrom1 libflint-arb-dev
+  libflint-arb2 libflint-dev libfltk-cairo1.3 libfltk-forms1.3 libfltk1.3-dev
+  libfontconfig1:i386 libfontembed1 libfplll-dev libfreetype6:i386 libfsapfs1
+  libfsext1 libfshfs1 libfsntfs1 libfsverity0 libfsxfs1 libftdi1-2 libfvde1
+  libfwnt1 libfwsi1 libgc-dev libgd-dev libgf2x-dev libgfapi0 libgfrpc0
+  libgfxdr0 libgiac-dev libgit2-1.1 libgivaro-dev libgl1-mesa-glx libglpk-dev
+  libglusterfs0 libgrib2c-dev libgsl-dev libguestfs-hfsplus
+  libguestfs-reiserfs libguestfs-xfs libguestfs0 libhdf5-mpi-dev
+  libhdf5-openmpi-cpp-103-1 libhdf5-openmpi-dev libhdf5-openmpi-fortran-102
+  libhdf5-openmpi-hl-100 libhdf5-openmpi-hl-cpp-100
+  libhdf5-openmpi-hl-fortran-100 libhfsp0 libhivex0 libhomfly-dev libhomfly0
+  libhpmud0 libhypre-dev libiml-dev libiml0 libinchi1 libiscsi7 libjbig0:i386
+  libjmol-java libjni-inchi-java libjni-inchi-jni libjpeg-turbo8:i386
+  libjpeg8:i386 libjs-backbone libjs-bootstrap-tour libjs-codemirror
+  libjs-es6-promise libjs-jed libjs-jquery-typeahead libjs-marked libjs-moment
+  libjs-requirejs libjs-requirejs-text libjs-text-encoding libjs-xterm
+  libkeybinder-3.0-0 liblaszip8 liblcms2-2:i386 libldm-1.0-0 liblfunction-dev
+  liblinbox-1.7.0-0 liblinbox-dev liblnk1 liblouisutdml-bin liblouisutdml-data
+  liblouisutdml9 liblrcalc-dev libluksde1 liblvm2cmd2.03 liblzf1 libm4ri-dev
+  libm4rie-0.0.20200125 libm4rie-dev libmaven-compiler-plugin-java
+  libmaven-shared-incremental-java libmbedtls14 libmbedx509-1 libmd0:i386
+  libmetview0d libmodplug1 libmpdec3:i386 libmsiecf1 libmtp-common
+  libmtp-runtime libmtp9 libnaga-java libndctl6 libnetcdf-c++4 libnetplan0
+  libnfs13 libnorm-dev libnspr4:i386 libnss3:i386 libolecf1 libopenjp2-7:i386
+  libopusfile0 libparpack2-dev libpdal-base13 libpdal-plugin-draco
+  libpdal-plugin-e57 libpdal-plugin-faux libpdal-plugin-hdf libpdal-plugin-i3s
+  libpdal-plugin-icebridge libpdal-plugin-pgpointcloud libpdal-plugins
+  libpdal-util13 libpetsc3.15-dev-common libpetsc3.15-dev-examples libpgm-dev
+  libpixman-1-0:i386 libplanarity-dev libplexus-compiler-java
+  libplexus-container-default-java libplexus-languages-java libpmem1
+  libpmemobj1 libpng16-16:i386 libpoppler-cpp0v5 libpoppler118:i386
+  libportmidi0 libppl-c4 libppl-dev libppl14 libprimecount7 libprimesieve9
+  libpython3-stdlib:i386 libpython3.10-minimal:i386 libpython3.10-stdlib:i386
+  libqcow1 libqdox2-java libqpdf28 libqt5location5 libqt5opengl5
+  libqt5positioningquick5 libqt5quickwidgets5 libqt5serialport5
+  libqt5webengine-data libqt5webengine5 libqt5webenginecore5
+  libqt5webenginewidgets5 libqt5websockets5 libqt5xmlpatterns5
+  libratpoints-2.1.3 libratpoints-dev librbd1 libre2-9 libreadline8:i386
+  libregf1 libreoffice-nlpsolver libreoffice-script-provider-bsh
+  libreoffice-script-provider-js libreoffice-wiki-publisher librpmbuild9
+  librpmsign9 librw-dev librw0 libsane-hpaio libscca1 libsdl2-image-2.0-0
+  libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libsigscan1 libsingular4-dev
+  libsingular4-dev-common libslirp0 libsmdev1 libsmraw1 libsodium-dev
+  libspice-server1 libsqlite3-0:i386 libstdc++6:i386 libsuperlu-dev
+  libsuperlu-dist-dev libsymmetrica2 libsymmetrica2-dev libtiff5:i386
+  libtrilinos-aztecoo-dev libtrilinos-ml-dev libtrilinos-trilinosss-dev
+  libtrilinos-zoltan-dev libusbredirparser1 libvirglrenderer1 libvirt0
+  libvpx-dev libvshadow1 libvslvm1 libvtk7.1p libvtk7.1p-qt libwebp7:i386
+  libwmf0.2-7 libwnck-3-0 libwnck-3-common libwpe-1.0-1
+  libwpebackend-fdo-1.0-1 libx11-6:i386 libxau6:i386 libxbean-reflect-java
+  libxcb-cursor0 libxcb-render0:i386 libxcb-shm0:i386 libxcb-xtest0
+  libxcb1:i386 libxdmcp6:i386 libxext6:i386 libxml2-dev libxrender1:i386
+  libyaml-dev libz3-4 libz3-dev libzmq3-dev libzn-poly-0.9 libzn-poly-dev
+  linux-headers-6.2.0-33-generic linux-headers-6.2.0-34-generic
+  linux-headers-6.2.0-35-generic linux-headers-6.2.0-36-generic
+  linux-hwe-6.2-headers-6.2.0-33 linux-hwe-6.2-headers-6.2.0-34
+  linux-hwe-6.2-headers-6.2.0-35 linux-hwe-6.2-headers-6.2.0-36
+  linux-image-6.2.0-33-generic linux-image-6.2.0-34-generic
+  linux-image-6.2.0-35-generic linux-image-6.2.0-36-generic
+  linux-modules-6.2.0-33-generic linux-modules-6.2.0-34-generic
+  linux-modules-6.2.0-35-generic linux-modules-6.2.0-36-generic
+  linux-modules-extra-6.2.0-33-generic linux-modules-extra-6.2.0-34-generic
+  linux-modules-extra-6.2.0-35-generic linux-modules-extra-6.2.0-36-generic
+  lsscsi lvm2 metview-data msr-tools ncal node-jed numba-doc
+  ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers osinfo-db ovmf
+  paraview-doc ppl-dev primecount-bin primesieve-bin
+  printer-driver-postscript-hp ps2eps pybind11-dev python-gmpy2-common
+  python-mako-doc python-odf-doc python-petsc4py-doc python-ppl-doc
+  python-pyopencl-doc python-tables-data python3-aiofiles python3-ajpy
+  python3-alabaster python3-aniso8601 python3-ansimarkup python3-artifacts
+  python3-asciitree python3-asn1crypto python3-async-timeout python3-automat
+  python3-base58 python3-bleach python3-cloudpickle python3-constantly
+  python3-debconf python3-dfdatetime python3-docutils python3-dropbox
+  python3-ecdsa python3-elasticsearch python3-et-xmlfile python3-fasteners
+  python3-fastimport python3-flatbuffers python3-fsspec python3-fusepy
+  python3-future python3-graphene python3-graphql-core python3-graphql-relay
+  python3-hamcrest python3-heapdict python3-hyperlink python3-imagesize
+  python3-incremental python3-ipy python3-isodatetime python3-itsdangerous
+  python3-jdcal python3-joblib python3-jupyterlab-pygments python3-ldap3
+  python3-ldapdomaindump python3-locket python3-louis python3-mnemonic
+  python3-mock python3-monotonic python3-mutagen python3-networkx python3-nose
+  python3-odf python3-opengl python3-pandocfilters python3-partd
+  python3-passlib python3-pbr python3-pefile python3-pkgconfig python3-png
+  python3-prometheus-client python3-promise python3-pyasn1
+  python3-pyasn1-modules python3-pybind11 python3-pycparser python3-pydot
+  python3-pyinotify python3-pyperclip python3-pyqrcode python3-pyshp
+  python3-pysmi python3-redis python3-roman python3-rx python3-send2trash
+  python3-snowballstemmer python3-sortedcontainers python3-speechd
+  python3-stone python3-suds python3-tblib python3-testpath
+  python3-threadpoolctl python3-tld python3-toolz python3-trie python3-tzlocal
+  python3-u-msgpack python3-websockets python3-werkzeug python3-xdg
+  python3-xkit python3-xlrd python3-xlsxwriter python3-xlwt python3-yaswfp
+  python3-zict qemu-block-extra qemu-system-common qemu-system-data
+  qemu-system-gui qemu-system-x86 qemu-utils qtbase5-dev-tools qtchooser
+  sagemath-doc sasmodels-private-libs scrub seabios sphinx-common supermin
+  swig swig4.0 syslinux syslinux-common texlive-font-utils
+  thin-provisioning-tools trilinos-dev valgrind valgrind-mpi x11-apps
+  x11-session-utils xbrlapi xinit yasm zerofree
+Use 'sudo apt autoremove' to remove them.
+0 to upgrade, 0 to newly install, 0 to remove and 54 not to upgrade.
+==> [2/9] Creating lab directory structure at: /root/hpc-lab
+==> [3/9] Writing Docker node image (sshd + sudo + python3)...
+==> [4/9] Writing docker compose cluster (head + compute1 + compute2)...
+==> [5/9] Writing Ansible config + inventory...
+==> [6/9] Writing Ansible playbook (OpenMPI + SSH + shared MPI program)...
+==> [7/9] Building and starting the cluster containers...
+Creating network "hpc-lab_default" with the default driver
+Building head
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   2.56kB
+Step 1/8 : FROM ubuntu:22.04
+Head "https://registry-1.docker.io/v2/library/ubuntu/manifests/22.04": Get "https://auth.docker.io/token?scope=repository%3Alibrary%2Fubuntu%3Apull&service=registry.docker.io": dial tcp [2a06:98c1:3105::ac40:904e]:443: connect: network is unreachable
+ERROR: Service 'head' failed to build : Build failed
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ Ansible cluster/HPC mini-lab
+
+ChatGPT said:
+
+You’re not failing in Ansible — Docker can’t even pull the base image:
+
+    dial tcp [2a06:...]:443: connect: network is unreachable
+
+That IP is IPv6, and your host currently can’t reach IPv6. Easiest fix: force Docker to use IPv4 (and optionally set DNS). Then re-run your script.
+
+Below is a hardened fix script + a patched hpc_minilab.sh that auto-detects and applies the IPv4 workaround.
+A) One-shot fix: force Docker to use IPv4 + DNS
+
+Run this on the host (not inside a container):
+
+sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
+{
+  "ipv6": false,
+  "dns": ["1.1.1.1", "8.8.8.8"]
+}
+EOF'
+
+# restart docker
+if command -v systemctl >/dev/null 2>&1; then
+  sudo systemctl restart docker
+else
+  sudo service docker restart || true
+  sudo dockerd >/tmp/dockerd.log 2>&1 & disown || true
+fi
+
+# quick connectivity test
+docker pull ubuntu:22.04
+
+If docker pull ubuntu:22.04 succeeds, your mini-lab will build.
+B) Patch your mini-lab script (auto-fix IPv6 pull failures)
+
+Replace your current hpc_minilab.sh with this updated version (same functionality, but adds: daemon.json, restart logic, pull test, cleaner path handling so it doesn’t create everything under /root when you run with sudo):
+
+#!/bin/bash
+# hpc_minilab.sh (patched)
+# Fixes common "network is unreachable" Docker pulls (IPv6 issues) by forcing IPv4/DNS.
+# Also keeps LAB_DIR under the invoking user's HOME even when run via sudo.
+
+set -euo pipefail
+
+# Preserve the real user when run under sudo
+REAL_USER="${SUDO_USER:-$USER}"
+REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
+LAB_DIR="${REAL_HOME}/hpc-lab"
+ANS_DIR="${LAB_DIR}/ansible"
+IMG_DIR="${LAB_DIR}/node_image"
+SHARED_DIR="${LAB_DIR}/shared"
+
+need_cmd() { command -v "$1" >/dev/null 2>&1 || return 1; }
+
+echo "==> [1/10] Checking/Installing prerequisites..."
+if need_cmd apt-get; then
+  sudo apt-get update -y
+  sudo apt-get install -y docker.io docker-compose ansible openssh-client
+else
+  echo "ERROR: apt-get not found. This script expects Debian/Ubuntu."
+  exit 1
+fi
+
+# Ensure docker is running
+if need_cmd systemctl; then
+  sudo systemctl enable --now docker || true
+else
+  sudo service docker start || true
+fi
+
+# Determine docker compose command
+DOCKER_COMPOSE=""
+if docker compose version >/dev/null 2>&1; then
+  DOCKER_COMPOSE="docker compose"
+elif need_cmd docker-compose; then
+  DOCKER_COMPOSE="docker-compose"
+else
+  echo "ERROR: neither 'docker compose' nor 'docker-compose' is available."
+  exit 1
+fi
+
+echo "==> [2/10] Ensuring Docker can pull images (IPv4/DNS workaround if needed)..."
+# Try a pull; if it fails with IPv6-like errors, apply daemon.json workaround
+set +e
+PULL_OUT="$(docker pull ubuntu:22.04 2>&1)"
+PULL_RC=$?
+set -e
+
+if [ $PULL_RC -ne 0 ]; then
+  echo "==> Docker pull failed. Applying IPv4/DNS workaround in /etc/docker/daemon.json ..."
+  sudo mkdir -p /etc/docker
+  sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
+{
+  "ipv6": false,
+  "dns": ["1.1.1.1", "8.8.8.8"]
+}
+EOF'
+
+  if need_cmd systemctl; then
+    sudo systemctl restart docker
+  else
+    sudo service docker restart || true
+  fi
+
+  echo "==> Retrying docker pull ubuntu:22.04 ..."
+  docker pull ubuntu:22.04
+fi
+
+echo "==> [3/10] Creating lab directory structure at: ${LAB_DIR}"
+mkdir -p "${ANS_DIR}" "${IMG_DIR}" "${SHARED_DIR}"
+
+echo "==> [4/10] Writing Docker node image (sshd + sudo + python3)..."
+cat > "${IMG_DIR}/Dockerfile" <<'DOCKERFILE'
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    openssh-server sudo python3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /var/run/sshd
+
+RUN useradd -m -s /bin/bash ansible \
+    && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible \
+    && chmod 440 /etc/sudoers.d/ansible
+
+RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
+ && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config \
+ && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D","-e"]
+DOCKERFILE
+
+echo "==> [5/10] Writing docker compose cluster (head + compute1 + compute2)..."
+cat > "${LAB_DIR}/compose.yml" <<'YAML'
+services:
+  head:
+    build: ./node_image
+    container_name: hpc-head
+    hostname: head
+    ports:
+      - "2221:22"
+    volumes:
+      - ./shared:/shared
+
+  compute1:
+    build: ./node_image
+    container_name: hpc-compute1
+    hostname: compute1
+    ports:
+      - "2222:22"
+    volumes:
+      - ./shared:/shared
+
+  compute2:
+    build: ./node_image
+    container_name: hpc-compute2
+    hostname: compute2
+    ports:
+      - "2223:22"
+    volumes:
+      - ./shared:/shared
+YAML
+
+echo "==> [6/10] Writing Ansible config + inventory..."
+cat > "${ANS_DIR}/ansible.cfg" <<'CFG'
+[defaults]
+inventory = inventory.ini
+host_key_checking = False
+retry_files_enabled = False
+timeout = 30
+interpreter_python = auto
+CFG
+
+cat > "${ANS_DIR}/inventory.ini" <<'INV'
+[head]
+head ansible_host=127.0.0.1 ansible_port=2221 ansible_user=ansible
+
+[compute]
+compute1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=ansible
+compute2 ansible_host=127.0.0.1 ansible_port=2223 ansible_user=ansible
+
+[cluster:children]
+head
+compute
+INV
+
+echo "==> [7/10] Writing Ansible playbook..."
+cat > "${ANS_DIR}/hpc.yml" <<'PLAY'
+---
+- name: HPC mini-lab (MPI over SSH) - base packages
+  hosts: cluster
+  become: yes
+
+  vars:
+    mpi_packages:
+      - build-essential
+      - openmpi-bin
+      - libopenmpi-dev
+      - openssh-client
+      - openssh-server
+
+  tasks:
+    - name: Install MPI toolchain and SSH
+      apt:
+        update_cache: yes
+        name: "{{ mpi_packages }}"
+        state: present
+
+    - name: Create mpi user
+      user:
+        name: mpi
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Allow mpi passwordless sudo (demo convenience)
+      copy:
+        dest: /etc/sudoers.d/mpi
+        content: "mpi ALL=(ALL) NOPASSWD:ALL\n"
+        mode: "0440"
+
+    - name: Ensure /shared exists (bind-mounted)
+      file:
+        path: /shared
+        state: directory
+        mode: "0777"
+
+- name: Configure key-based SSH for MPI (head -> all)
+  hosts: head
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Generate SSH key for mpi on head (if missing)
+      command: sudo -u mpi ssh-keygen -t ed25519 -N "" -f /home/mpi/.ssh/id_ed25519
+      args:
+        creates: /home/mpi/.ssh/id_ed25519
+
+    - name: Read mpi public key
+      slurp:
+        src: /home/mpi/.ssh/id_ed25519.pub
+      register: mpi_pub
+
+    - name: Write cluster hostfile for MPI
+      copy:
+        dest: /shared/hostfile
+        content: |
+          compute1 slots=1
+          compute2 slots=1
+        mode: "0644"
+
+    - name: Write MPI hello program (C)
+      copy:
+        dest: /shared/mpi_hello.c
+        content: |
+          #include <mpi.h>
+          #include <stdio.h>
+          int main(int argc, char** argv) {
+            MPI_Init(&argc, &argv);
+            int rank, size;
+            MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+            MPI_Comm_size(MPI_COMM_WORLD, &size);
+            char name[MPI_MAX_PROCESSOR_NAME];
+            int len = 0;
+            MPI_Get_processor_name(name, &len);
+            printf("Hello from rank %d of %d on %s\n", rank, size, name);
+            MPI_Finalize();
+            return 0;
+          }
+
+    - name: Compile MPI program on head into /shared
+      command: mpicc /shared/mpi_hello.c -O2 -o /shared/mpi_hello
+      args:
+        creates: /shared/mpi_hello
+
+- name: Authorize head mpi key on all nodes
+  hosts: cluster
+  become: yes
+
+  tasks:
+    - name: Ensure mpi has .ssh
+      file:
+        path: /home/mpi/.ssh
+        state: directory
+        owner: mpi
+        group: mpi
+        mode: "0700"
+
+    - name: Add head mpi public key to authorized_keys
+      authorized_key:
+        user: mpi
+        key: "{{ hostvars['head'].mpi_pub.content | b64decode }}"
+        state: present
+
+    - name: Disable StrictHostKeyChecking for mpi (demo convenience)
+      copy:
+        dest: /home/mpi/.ssh/config
+        owner: mpi
+        group: mpi
+        mode: "0600"
+        content: |
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
+PLAY
+
+echo "==> [8/10] Building and starting the cluster containers..."
+cd "${LAB_DIR}"
+${DOCKER_COMPOSE} -f compose.yml up -d --build
+
+echo "==> Waiting briefly for sshd to come up on nodes..."
+sleep 2
+
+echo "==> [9/10] Setting up SSH key on THIS machine for Ansible -> containers..."
+sudo -u "${REAL_USER}" mkdir -p "${REAL_HOME}/.ssh"
+if [ ! -f "${REAL_HOME}/.ssh/id_ed25519" ]; then
+  sudo -u "${REAL_USER}" ssh-keygen -t ed25519 -N "" -f "${REAL_HOME}/.ssh/id_ed25519"
+fi
+
+echo "==> Installing your public key into each container's ansible account..."
+for p in 2221 2222 2223; do
+  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$p" ansible@127.0.0.1 \
+    "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+  cat "${REAL_HOME}/.ssh/id_ed25519.pub" | \
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$p" ansible@127.0.0.1 \
+    "cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+done
+
+echo "==> Sanity: Ansible ping all nodes..."
+cd "${ANS_DIR}"
+ansible all -m ping
+
+echo "==> [10/10] Running the Ansible HPC provisioning playbook..."
+ansible-playbook hpc.yml
+
+echo
+echo "==> Running MPI test across compute nodes (from head)..."
+cd "${LAB_DIR}"
+docker exec -it hpc-head bash -lc \
+  "sudo -u mpi bash -lc 'mpirun --hostfile /shared/hostfile -np 2 /shared/mpi_hello'"
+
+echo
+echo "==> SUCCESS: HPC mini-lab built, provisioned, and MPI job executed."
+echo "    Lab folder: ${LAB_DIR}"
+echo "    To stop:    cd ${LAB_DIR} && ${DOCKER_COMPOSE} -f compose.yml down"
+
+Run it (recommended):
+
+chmod u+x hpc_minilab.sh
+sudo ./hpc_minilab.sh
+
+C) If you want the quickest possible fix (no script changes)
+
+Just do:
+
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+docker pull ubuntu:22.04
+
+Then rerun your original ./hpc_minilab.sh.
+Why this happens (in one line)
+
+Your Docker engine is trying to reach Docker Hub via IPv6, but your network path to IPv6 is broken/unavailable, so the TLS connection never forms.
+
+If you run the docker pull ubuntu:22.04 after the workaround and paste the first 20 lines of output (or just tell me if it succeeds), I’ll adjust the script further if needed (e.g., proxies, corporate firewall, DNS over HTTPS, etc.).
+
+
