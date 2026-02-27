@@ -1,0 +1,986 @@
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ ls ansible*
+ansible_demo.sh
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ rm ansible_demo.sh
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ nano ansible_demo.sh
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ chmod u+x ansible_demo.sh
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ ./ansible_demo.sh
+==> [1/10] Checking/Installing prerequisites...
+Hit:1 http://dl.google.com/linux/earth/deb stable InRelease
+Hit:2 http://au.archive.ubuntu.com/ubuntu jammy InRelease                      
+Hit:3 http://au.archive.ubuntu.com/ubuntu jammy-updates InRelease              
+Hit:4 http://au.archive.ubuntu.com/ubuntu jammy-backports InRelease            
+Hit:5 https://dl.google.com/linux/chrome/deb stable InRelease                  
+Hit:6 https://packages.microsoft.com/repos/edge stable InRelease               
+Hit:7 https://packages.microsoft.com/repos/code stable InRelease             
+Hit:8 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ansible is already the newest version (2.10.7+merged+base+2.10.8+dfsg-1).
+docker-compose is already the newest version (1.29.2-1).
+openssh-client is already the newest version (1:8.9p1-3ubuntu0.13).
+docker.io is already the newest version (28.2.2-0ubuntu1~22.04.1).
+The following packages were automatically installed and are no longer required:
+  at augeas-lenses base58 bsdmainutils bumps-private-libs cpu-checker
+  cups-browsed cups-daemon cups-ipp-utils cups-server-common cysignals-tools
+  deap-doc dmeventd docutils-common ecl extlinux fflas-ffpack
+  fflas-ffpack-common fltk1.3-doc fluid fonts-dejavu fonts-linuxlibertine
+  fonts-noto-core fonts-noto-extra fonts-noto-ui-core gir1.2-dbusmenu-glib-0.4
+  gir1.2-dee-1.0 gir1.2-goa-1.0 gir1.2-gtksource-4 gir1.2-keybinder-3.0
+  gir1.2-snapd-1 gir1.2-unity-7.0 gir1.2-wnck-3.0 glpk-utils hfsplus
+  hplip-data icoutils ipxe-qemu ipxe-qemu-256k-compat-efi-roms jmol
+  jupyter-nbextension-jupyter-js-widgets kpartx ldap-utils ldmtool libaio1
+  libarpack2-dev libatlas-ecmwf-0 libatomic-ops-dev libaugeas0 libbde1
+  libboost-chrono-dev libboost-filesystem-dev libboost-math-dev
+  libboost-python1.74.0 libboost-serialization-dev libboost-timer-dev
+  libbraiding-dev libbraiding0 libbrial-dev libbrial-groebner-dev
+  libbrotli1:i386 libbsd0:i386 libbsh-java libcacard0 libcairo2:i386
+  libcdd-dev libcdd-doc libcdd-tools libcliquer-dev libcommons-lang-java
+  libcreg1 libcupsimage2 libdaxctl1 libdeflate0:i386 libdevmapper-event1.02.1
+  libdolfin-dev-common libdolfin2019.2 libdraco4 libdsdp-5.8gf libec-dev
+  libeccodes-dev libecl-dev libecm-dev libecm1-dev libecm1-dev-common
+  libegl1-mesa libemos0d libesedb1 libevt1 libevtx1 libexec-maven-plugin-java
+  libexpat1:i386 libfckit0d libffi8:i386 libflashrom1 libflint-arb-dev
+  libflint-arb2 libflint-dev libfltk-cairo1.3 libfltk-forms1.3 libfltk1.3-dev
+  libfontconfig1:i386 libfontembed1 libfplll-dev libfreetype6:i386 libfsapfs1
+  libfsext1 libfshfs1 libfsntfs1 libfsverity0 libfsxfs1 libftdi1-2 libfvde1
+  libfwnt1 libfwsi1 libgc-dev libgd-dev libgf2x-dev libgfapi0 libgfrpc0
+  libgfxdr0 libgiac-dev libgit2-1.1 libgivaro-dev libgl1-mesa-glx libglpk-dev
+  libglusterfs0 libgrib2c-dev libgsl-dev libguestfs-hfsplus
+  libguestfs-reiserfs libguestfs-xfs libguestfs0 libhdf5-mpi-dev
+  libhdf5-openmpi-cpp-103-1 libhdf5-openmpi-dev libhdf5-openmpi-fortran-102
+  libhdf5-openmpi-hl-100 libhdf5-openmpi-hl-cpp-100
+  libhdf5-openmpi-hl-fortran-100 libhfsp0 libhivex0 libhomfly-dev libhomfly0
+  libhpmud0 libhypre-dev libiml-dev libiml0 libinchi1 libiscsi7 libjbig0:i386
+  libjmol-java libjni-inchi-java libjni-inchi-jni libjpeg-turbo8:i386
+  libjpeg8:i386 libjs-backbone libjs-bootstrap-tour libjs-codemirror
+  libjs-es6-promise libjs-jed libjs-jquery-typeahead libjs-marked libjs-moment
+  libjs-requirejs libjs-requirejs-text libjs-text-encoding libjs-xterm
+  libkeybinder-3.0-0 liblaszip8 liblcms2-2:i386 libldm-1.0-0 liblfunction-dev
+  liblinbox-1.7.0-0 liblinbox-dev liblnk1 liblouisutdml-bin liblouisutdml-data
+  liblouisutdml9 liblrcalc-dev libluksde1 liblvm2cmd2.03 liblzf1 libm4ri-dev
+  libm4rie-0.0.20200125 libm4rie-dev libmaven-compiler-plugin-java
+  libmaven-shared-incremental-java libmbedtls14 libmbedx509-1 libmd0:i386
+  libmetview0d libmodplug1 libmpdec3:i386 libmsiecf1 libmtp-common
+  libmtp-runtime libmtp9 libnaga-java libndctl6 libnetcdf-c++4 libnetplan0
+  libnfs13 libnorm-dev libnspr4:i386 libnss3:i386 libolecf1 libopenjp2-7:i386
+  libopusfile0 libparpack2-dev libpdal-base13 libpdal-plugin-draco
+  libpdal-plugin-e57 libpdal-plugin-faux libpdal-plugin-hdf libpdal-plugin-i3s
+  libpdal-plugin-icebridge libpdal-plugin-pgpointcloud libpdal-plugins
+  libpdal-util13 libpetsc3.15-dev-common libpetsc3.15-dev-examples libpgm-dev
+  libpixman-1-0:i386 libplanarity-dev libplexus-compiler-java
+  libplexus-container-default-java libplexus-languages-java libpmem1
+  libpmemobj1 libpng16-16:i386 libpoppler-cpp0v5 libpoppler118:i386
+  libportmidi0 libppl-c4 libppl-dev libppl14 libprimecount7 libprimesieve9
+  libpython3-stdlib:i386 libpython3.10-minimal:i386 libpython3.10-stdlib:i386
+  libqcow1 libqdox2-java libqpdf28 libqt5location5 libqt5opengl5
+  libqt5positioningquick5 libqt5quickwidgets5 libqt5serialport5
+  libqt5webengine-data libqt5webengine5 libqt5webenginecore5
+  libqt5webenginewidgets5 libqt5websockets5 libqt5xmlpatterns5
+  libratpoints-2.1.3 libratpoints-dev librbd1 libre2-9 libreadline8:i386
+  libregf1 libreoffice-nlpsolver libreoffice-script-provider-bsh
+  libreoffice-script-provider-js libreoffice-wiki-publisher librpmbuild9
+  librpmsign9 librw-dev librw0 libsane-hpaio libscca1 libsdl2-image-2.0-0
+  libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libsigscan1 libsingular4-dev
+  libsingular4-dev-common libslirp0 libsmdev1 libsmraw1 libsodium-dev
+  libspice-server1 libsqlite3-0:i386 libstdc++6:i386 libsuperlu-dev
+  libsuperlu-dist-dev libsymmetrica2 libsymmetrica2-dev libtiff5:i386
+  libtrilinos-aztecoo-dev libtrilinos-ml-dev libtrilinos-trilinosss-dev
+  libtrilinos-zoltan-dev libusbredirparser1 libvirglrenderer1 libvirt0
+  libvpx-dev libvshadow1 libvslvm1 libvtk7.1p libvtk7.1p-qt libwebp7:i386
+  libwmf0.2-7 libwnck-3-0 libwnck-3-common libwpe-1.0-1
+  libwpebackend-fdo-1.0-1 libx11-6:i386 libxau6:i386 libxbean-reflect-java
+  libxcb-cursor0 libxcb-render0:i386 libxcb-shm0:i386 libxcb-xtest0
+  libxcb1:i386 libxdmcp6:i386 libxext6:i386 libxml2-dev libxrender1:i386
+  libyaml-dev libz3-4 libz3-dev libzmq3-dev libzn-poly-0.9 libzn-poly-dev
+  linux-headers-6.2.0-33-generic linux-headers-6.2.0-34-generic
+  linux-headers-6.2.0-35-generic linux-headers-6.2.0-36-generic
+  linux-hwe-6.2-headers-6.2.0-33 linux-hwe-6.2-headers-6.2.0-34
+  linux-hwe-6.2-headers-6.2.0-35 linux-hwe-6.2-headers-6.2.0-36
+  linux-image-6.2.0-33-generic linux-image-6.2.0-34-generic
+  linux-image-6.2.0-35-generic linux-image-6.2.0-36-generic
+  linux-modules-6.2.0-33-generic linux-modules-6.2.0-34-generic
+  linux-modules-6.2.0-35-generic linux-modules-6.2.0-36-generic
+  linux-modules-extra-6.2.0-33-generic linux-modules-extra-6.2.0-34-generic
+  linux-modules-extra-6.2.0-35-generic linux-modules-extra-6.2.0-36-generic
+  lsscsi lvm2 metview-data msr-tools ncal node-jed numba-doc
+  ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers osinfo-db ovmf
+  paraview-doc ppl-dev primecount-bin primesieve-bin
+  printer-driver-postscript-hp ps2eps pybind11-dev python-gmpy2-common
+  python-mako-doc python-odf-doc python-petsc4py-doc python-ppl-doc
+  python-pyopencl-doc python-tables-data python3-aiofiles python3-ajpy
+  python3-alabaster python3-aniso8601 python3-ansimarkup python3-artifacts
+  python3-asciitree python3-asn1crypto python3-async-timeout python3-automat
+  python3-base58 python3-bleach python3-cloudpickle python3-constantly
+  python3-debconf python3-dfdatetime python3-docutils python3-dropbox
+  python3-ecdsa python3-elasticsearch python3-et-xmlfile python3-fasteners
+  python3-fastimport python3-flatbuffers python3-fsspec python3-fusepy
+  python3-future python3-graphene python3-graphql-core python3-graphql-relay
+  python3-hamcrest python3-heapdict python3-hyperlink python3-imagesize
+  python3-incremental python3-ipy python3-isodatetime python3-itsdangerous
+  python3-jdcal python3-joblib python3-jupyterlab-pygments python3-ldap3
+  python3-ldapdomaindump python3-locket python3-louis python3-mnemonic
+  python3-mock python3-monotonic python3-mutagen python3-networkx python3-nose
+  python3-odf python3-opengl python3-pandocfilters python3-partd
+  python3-passlib python3-pbr python3-pefile python3-pkgconfig python3-png
+  python3-prometheus-client python3-promise python3-pyasn1
+  python3-pyasn1-modules python3-pybind11 python3-pycparser python3-pydot
+  python3-pyinotify python3-pyperclip python3-pyqrcode python3-pyshp
+  python3-pysmi python3-redis python3-roman python3-rx python3-send2trash
+  python3-snowballstemmer python3-sortedcontainers python3-speechd
+  python3-stone python3-suds python3-tblib python3-testpath
+  python3-threadpoolctl python3-tld python3-toolz python3-trie python3-tzlocal
+  python3-u-msgpack python3-websockets python3-werkzeug python3-xdg
+  python3-xkit python3-xlrd python3-xlsxwriter python3-xlwt python3-yaswfp
+  python3-zict qemu-block-extra qemu-system-common qemu-system-data
+  qemu-system-gui qemu-system-x86 qemu-utils qtbase5-dev-tools qtchooser
+  sagemath-doc sasmodels-private-libs scrub seabios sphinx-common supermin
+  swig swig4.0 syslinux syslinux-common texlive-font-utils
+  thin-provisioning-tools trilinos-dev valgrind valgrind-mpi x11-apps
+  x11-session-utils xbrlapi xinit yasm zerofree
+Use 'sudo apt autoremove' to remove them.
+0 to upgrade, 0 to newly install, 0 to remove and 54 not to upgrade.
+==> [2/10] Ensuring Docker can pull images (IPv4/DNS workaround if needed)...
+==> Docker pull failed. Applying IPv4/DNS workaround in /etc/docker/daemon.json ...
+==> Retrying docker pull ubuntu:22.04 ...
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.50/images/create?fromImage=docker.io%2Flibrary%2Fubuntu&tag=22.04": dial unix /var/run/docker.sock: connect: permission denied
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ sudo apt install docker
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+docker is already the newest version (1.5-2).
+The following packages were automatically installed and are no longer required:
+  at augeas-lenses base58 bsdmainutils bumps-private-libs cpu-checker
+  cups-browsed cups-daemon cups-ipp-utils cups-server-common cysignals-tools
+  deap-doc dmeventd docutils-common ecl extlinux fflas-ffpack
+  fflas-ffpack-common fltk1.3-doc fluid fonts-dejavu fonts-linuxlibertine
+  fonts-noto-core fonts-noto-extra fonts-noto-ui-core gir1.2-dbusmenu-glib-0.4
+  gir1.2-dee-1.0 gir1.2-goa-1.0 gir1.2-gtksource-4 gir1.2-keybinder-3.0
+  gir1.2-snapd-1 gir1.2-unity-7.0 gir1.2-wnck-3.0 glpk-utils hfsplus
+  hplip-data icoutils ipxe-qemu ipxe-qemu-256k-compat-efi-roms jmol
+  jupyter-nbextension-jupyter-js-widgets kpartx ldap-utils ldmtool libaio1
+  libarpack2-dev libatlas-ecmwf-0 libatomic-ops-dev libaugeas0 libbde1
+  libboost-chrono-dev libboost-filesystem-dev libboost-math-dev
+  libboost-python1.74.0 libboost-serialization-dev libboost-timer-dev
+  libbraiding-dev libbraiding0 libbrial-dev libbrial-groebner-dev
+  libbrotli1:i386 libbsd0:i386 libbsh-java libcacard0 libcairo2:i386
+  libcdd-dev libcdd-doc libcdd-tools libcliquer-dev libcommons-lang-java
+  libcreg1 libcupsimage2 libdaxctl1 libdeflate0:i386 libdevmapper-event1.02.1
+  libdolfin-dev-common libdolfin2019.2 libdraco4 libdsdp-5.8gf libec-dev
+  libeccodes-dev libecl-dev libecm-dev libecm1-dev libecm1-dev-common
+  libegl1-mesa libemos0d libesedb1 libevt1 libevtx1 libexec-maven-plugin-java
+  libexpat1:i386 libfckit0d libffi8:i386 libflashrom1 libflint-arb-dev
+  libflint-arb2 libflint-dev libfltk-cairo1.3 libfltk-forms1.3 libfltk1.3-dev
+  libfontconfig1:i386 libfontembed1 libfplll-dev libfreetype6:i386 libfsapfs1
+  libfsext1 libfshfs1 libfsntfs1 libfsverity0 libfsxfs1 libftdi1-2 libfvde1
+  libfwnt1 libfwsi1 libgc-dev libgd-dev libgf2x-dev libgfapi0 libgfrpc0
+  libgfxdr0 libgiac-dev libgit2-1.1 libgivaro-dev libgl1-mesa-glx libglpk-dev
+  libglusterfs0 libgrib2c-dev libgsl-dev libguestfs-hfsplus
+  libguestfs-reiserfs libguestfs-xfs libguestfs0 libhdf5-mpi-dev
+  libhdf5-openmpi-cpp-103-1 libhdf5-openmpi-dev libhdf5-openmpi-fortran-102
+  libhdf5-openmpi-hl-100 libhdf5-openmpi-hl-cpp-100
+  libhdf5-openmpi-hl-fortran-100 libhfsp0 libhivex0 libhomfly-dev libhomfly0
+  libhpmud0 libhypre-dev libiml-dev libiml0 libinchi1 libiscsi7 libjbig0:i386
+  libjmol-java libjni-inchi-java libjni-inchi-jni libjpeg-turbo8:i386
+  libjpeg8:i386 libjs-backbone libjs-bootstrap-tour libjs-codemirror
+  libjs-es6-promise libjs-jed libjs-jquery-typeahead libjs-marked libjs-moment
+  libjs-requirejs libjs-requirejs-text libjs-text-encoding libjs-xterm
+  libkeybinder-3.0-0 liblaszip8 liblcms2-2:i386 libldm-1.0-0 liblfunction-dev
+  liblinbox-1.7.0-0 liblinbox-dev liblnk1 liblouisutdml-bin liblouisutdml-data
+  liblouisutdml9 liblrcalc-dev libluksde1 liblvm2cmd2.03 liblzf1 libm4ri-dev
+  libm4rie-0.0.20200125 libm4rie-dev libmaven-compiler-plugin-java
+  libmaven-shared-incremental-java libmbedtls14 libmbedx509-1 libmd0:i386
+  libmetview0d libmodplug1 libmpdec3:i386 libmsiecf1 libmtp-common
+  libmtp-runtime libmtp9 libnaga-java libndctl6 libnetcdf-c++4 libnetplan0
+  libnfs13 libnorm-dev libnspr4:i386 libnss3:i386 libolecf1 libopenjp2-7:i386
+  libopusfile0 libparpack2-dev libpdal-base13 libpdal-plugin-draco
+  libpdal-plugin-e57 libpdal-plugin-faux libpdal-plugin-hdf libpdal-plugin-i3s
+  libpdal-plugin-icebridge libpdal-plugin-pgpointcloud libpdal-plugins
+  libpdal-util13 libpetsc3.15-dev-common libpetsc3.15-dev-examples libpgm-dev
+  libpixman-1-0:i386 libplanarity-dev libplexus-compiler-java
+  libplexus-container-default-java libplexus-languages-java libpmem1
+  libpmemobj1 libpng16-16:i386 libpoppler-cpp0v5 libpoppler118:i386
+  libportmidi0 libppl-c4 libppl-dev libppl14 libprimecount7 libprimesieve9
+  libpython3-stdlib:i386 libpython3.10-minimal:i386 libpython3.10-stdlib:i386
+  libqcow1 libqdox2-java libqpdf28 libqt5location5 libqt5opengl5
+  libqt5positioningquick5 libqt5quickwidgets5 libqt5serialport5
+  libqt5webengine-data libqt5webengine5 libqt5webenginecore5
+  libqt5webenginewidgets5 libqt5websockets5 libqt5xmlpatterns5
+  libratpoints-2.1.3 libratpoints-dev librbd1 libre2-9 libreadline8:i386
+  libregf1 libreoffice-nlpsolver libreoffice-script-provider-bsh
+  libreoffice-script-provider-js libreoffice-wiki-publisher librpmbuild9
+  librpmsign9 librw-dev librw0 libsane-hpaio libscca1 libsdl2-image-2.0-0
+  libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libsigscan1 libsingular4-dev
+  libsingular4-dev-common libslirp0 libsmdev1 libsmraw1 libsodium-dev
+  libspice-server1 libsqlite3-0:i386 libstdc++6:i386 libsuperlu-dev
+  libsuperlu-dist-dev libsymmetrica2 libsymmetrica2-dev libtiff5:i386
+  libtrilinos-aztecoo-dev libtrilinos-ml-dev libtrilinos-trilinosss-dev
+  libtrilinos-zoltan-dev libusbredirparser1 libvirglrenderer1 libvirt0
+  libvpx-dev libvshadow1 libvslvm1 libvtk7.1p libvtk7.1p-qt libwebp7:i386
+  libwmf0.2-7 libwnck-3-0 libwnck-3-common libwpe-1.0-1
+  libwpebackend-fdo-1.0-1 libx11-6:i386 libxau6:i386 libxbean-reflect-java
+  libxcb-cursor0 libxcb-render0:i386 libxcb-shm0:i386 libxcb-xtest0
+  libxcb1:i386 libxdmcp6:i386 libxext6:i386 libxml2-dev libxrender1:i386
+  libyaml-dev libz3-4 libz3-dev libzmq3-dev libzn-poly-0.9 libzn-poly-dev
+  linux-headers-6.2.0-33-generic linux-headers-6.2.0-34-generic
+  linux-headers-6.2.0-35-generic linux-headers-6.2.0-36-generic
+  linux-hwe-6.2-headers-6.2.0-33 linux-hwe-6.2-headers-6.2.0-34
+  linux-hwe-6.2-headers-6.2.0-35 linux-hwe-6.2-headers-6.2.0-36
+  linux-image-6.2.0-33-generic linux-image-6.2.0-34-generic
+  linux-image-6.2.0-35-generic linux-image-6.2.0-36-generic
+  linux-modules-6.2.0-33-generic linux-modules-6.2.0-34-generic
+  linux-modules-6.2.0-35-generic linux-modules-6.2.0-36-generic
+  linux-modules-extra-6.2.0-33-generic linux-modules-extra-6.2.0-34-generic
+  linux-modules-extra-6.2.0-35-generic linux-modules-extra-6.2.0-36-generic
+  lsscsi lvm2 metview-data msr-tools ncal node-jed numba-doc
+  ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers osinfo-db ovmf
+  paraview-doc ppl-dev primecount-bin primesieve-bin
+  printer-driver-postscript-hp ps2eps pybind11-dev python-gmpy2-common
+  python-mako-doc python-odf-doc python-petsc4py-doc python-ppl-doc
+  python-pyopencl-doc python-tables-data python3-aiofiles python3-ajpy
+  python3-alabaster python3-aniso8601 python3-ansimarkup python3-artifacts
+  python3-asciitree python3-asn1crypto python3-async-timeout python3-automat
+  python3-base58 python3-bleach python3-cloudpickle python3-constantly
+  python3-debconf python3-dfdatetime python3-docutils python3-dropbox
+  python3-ecdsa python3-elasticsearch python3-et-xmlfile python3-fasteners
+  python3-fastimport python3-flatbuffers python3-fsspec python3-fusepy
+  python3-future python3-graphene python3-graphql-core python3-graphql-relay
+  python3-hamcrest python3-heapdict python3-hyperlink python3-imagesize
+  python3-incremental python3-ipy python3-isodatetime python3-itsdangerous
+  python3-jdcal python3-joblib python3-jupyterlab-pygments python3-ldap3
+  python3-ldapdomaindump python3-locket python3-louis python3-mnemonic
+  python3-mock python3-monotonic python3-mutagen python3-networkx python3-nose
+  python3-odf python3-opengl python3-pandocfilters python3-partd
+  python3-passlib python3-pbr python3-pefile python3-pkgconfig python3-png
+  python3-prometheus-client python3-promise python3-pyasn1
+  python3-pyasn1-modules python3-pybind11 python3-pycparser python3-pydot
+  python3-pyinotify python3-pyperclip python3-pyqrcode python3-pyshp
+  python3-pysmi python3-redis python3-roman python3-rx python3-send2trash
+  python3-snowballstemmer python3-sortedcontainers python3-speechd
+  python3-stone python3-suds python3-tblib python3-testpath
+  python3-threadpoolctl python3-tld python3-toolz python3-trie python3-tzlocal
+  python3-u-msgpack python3-websockets python3-werkzeug python3-xdg
+  python3-xkit python3-xlrd python3-xlsxwriter python3-xlwt python3-yaswfp
+  python3-zict qemu-block-extra qemu-system-common qemu-system-data
+  qemu-system-gui qemu-system-x86 qemu-utils qtbase5-dev-tools qtchooser
+  sagemath-doc sasmodels-private-libs scrub seabios sphinx-common supermin
+  swig swig4.0 syslinux syslinux-common texlive-font-utils
+  thin-provisioning-tools trilinos-dev valgrind valgrind-mpi x11-apps
+  x11-session-utils xbrlapi xinit yasm zerofree
+Use 'sudo apt autoremove' to remove them.
+0 to upgrade, 0 to newly install, 0 to remove and 54 not to upgrade.
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ sudo ./ansible_demo.sh
+==> [1/10] Checking/Installing prerequisites...
+Hit:1 http://dl.google.com/linux/earth/deb stable InRelease
+Hit:2 http://au.archive.ubuntu.com/ubuntu jammy InRelease                      
+Hit:3 http://au.archive.ubuntu.com/ubuntu jammy-updates InRelease              
+Hit:4 http://au.archive.ubuntu.com/ubuntu jammy-backports InRelease            
+Hit:5 https://dl.google.com/linux/chrome/deb stable InRelease                  
+Hit:6 http://security.ubuntu.com/ubuntu jammy-security InRelease               
+Hit:7 https://packages.microsoft.com/repos/edge stable InRelease
+Hit:8 https://packages.microsoft.com/repos/code stable InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ansible is already the newest version (2.10.7+merged+base+2.10.8+dfsg-1).
+docker-compose is already the newest version (1.29.2-1).
+openssh-client is already the newest version (1:8.9p1-3ubuntu0.13).
+docker.io is already the newest version (28.2.2-0ubuntu1~22.04.1).
+The following packages were automatically installed and are no longer required:
+  at augeas-lenses base58 bsdmainutils bumps-private-libs cpu-checker
+  cups-browsed cups-daemon cups-ipp-utils cups-server-common cysignals-tools
+  deap-doc dmeventd docutils-common ecl extlinux fflas-ffpack
+  fflas-ffpack-common fltk1.3-doc fluid fonts-dejavu fonts-linuxlibertine
+  fonts-noto-core fonts-noto-extra fonts-noto-ui-core gir1.2-dbusmenu-glib-0.4
+  gir1.2-dee-1.0 gir1.2-goa-1.0 gir1.2-gtksource-4 gir1.2-keybinder-3.0
+  gir1.2-snapd-1 gir1.2-unity-7.0 gir1.2-wnck-3.0 glpk-utils hfsplus
+  hplip-data icoutils ipxe-qemu ipxe-qemu-256k-compat-efi-roms jmol
+  jupyter-nbextension-jupyter-js-widgets kpartx ldap-utils ldmtool libaio1
+  libarpack2-dev libatlas-ecmwf-0 libatomic-ops-dev libaugeas0 libbde1
+  libboost-chrono-dev libboost-filesystem-dev libboost-math-dev
+  libboost-python1.74.0 libboost-serialization-dev libboost-timer-dev
+  libbraiding-dev libbraiding0 libbrial-dev libbrial-groebner-dev
+  libbrotli1:i386 libbsd0:i386 libbsh-java libcacard0 libcairo2:i386
+  libcdd-dev libcdd-doc libcdd-tools libcliquer-dev libcommons-lang-java
+  libcreg1 libcupsimage2 libdaxctl1 libdeflate0:i386 libdevmapper-event1.02.1
+  libdolfin-dev-common libdolfin2019.2 libdraco4 libdsdp-5.8gf libec-dev
+  libeccodes-dev libecl-dev libecm-dev libecm1-dev libecm1-dev-common
+  libegl1-mesa libemos0d libesedb1 libevt1 libevtx1 libexec-maven-plugin-java
+  libexpat1:i386 libfckit0d libffi8:i386 libflashrom1 libflint-arb-dev
+  libflint-arb2 libflint-dev libfltk-cairo1.3 libfltk-forms1.3 libfltk1.3-dev
+  libfontconfig1:i386 libfontembed1 libfplll-dev libfreetype6:i386 libfsapfs1
+  libfsext1 libfshfs1 libfsntfs1 libfsverity0 libfsxfs1 libftdi1-2 libfvde1
+  libfwnt1 libfwsi1 libgc-dev libgd-dev libgf2x-dev libgfapi0 libgfrpc0
+  libgfxdr0 libgiac-dev libgit2-1.1 libgivaro-dev libgl1-mesa-glx libglpk-dev
+  libglusterfs0 libgrib2c-dev libgsl-dev libguestfs-hfsplus
+  libguestfs-reiserfs libguestfs-xfs libguestfs0 libhdf5-mpi-dev
+  libhdf5-openmpi-cpp-103-1 libhdf5-openmpi-dev libhdf5-openmpi-fortran-102
+  libhdf5-openmpi-hl-100 libhdf5-openmpi-hl-cpp-100
+  libhdf5-openmpi-hl-fortran-100 libhfsp0 libhivex0 libhomfly-dev libhomfly0
+  libhpmud0 libhypre-dev libiml-dev libiml0 libinchi1 libiscsi7 libjbig0:i386
+  libjmol-java libjni-inchi-java libjni-inchi-jni libjpeg-turbo8:i386
+  libjpeg8:i386 libjs-backbone libjs-bootstrap-tour libjs-codemirror
+  libjs-es6-promise libjs-jed libjs-jquery-typeahead libjs-marked libjs-moment
+  libjs-requirejs libjs-requirejs-text libjs-text-encoding libjs-xterm
+  libkeybinder-3.0-0 liblaszip8 liblcms2-2:i386 libldm-1.0-0 liblfunction-dev
+  liblinbox-1.7.0-0 liblinbox-dev liblnk1 liblouisutdml-bin liblouisutdml-data
+  liblouisutdml9 liblrcalc-dev libluksde1 liblvm2cmd2.03 liblzf1 libm4ri-dev
+  libm4rie-0.0.20200125 libm4rie-dev libmaven-compiler-plugin-java
+  libmaven-shared-incremental-java libmbedtls14 libmbedx509-1 libmd0:i386
+  libmetview0d libmodplug1 libmpdec3:i386 libmsiecf1 libmtp-common
+  libmtp-runtime libmtp9 libnaga-java libndctl6 libnetcdf-c++4 libnetplan0
+  libnfs13 libnorm-dev libnspr4:i386 libnss3:i386 libolecf1 libopenjp2-7:i386
+  libopusfile0 libparpack2-dev libpdal-base13 libpdal-plugin-draco
+  libpdal-plugin-e57 libpdal-plugin-faux libpdal-plugin-hdf libpdal-plugin-i3s
+  libpdal-plugin-icebridge libpdal-plugin-pgpointcloud libpdal-plugins
+  libpdal-util13 libpetsc3.15-dev-common libpetsc3.15-dev-examples libpgm-dev
+  libpixman-1-0:i386 libplanarity-dev libplexus-compiler-java
+  libplexus-container-default-java libplexus-languages-java libpmem1
+  libpmemobj1 libpng16-16:i386 libpoppler-cpp0v5 libpoppler118:i386
+  libportmidi0 libppl-c4 libppl-dev libppl14 libprimecount7 libprimesieve9
+  libpython3-stdlib:i386 libpython3.10-minimal:i386 libpython3.10-stdlib:i386
+  libqcow1 libqdox2-java libqpdf28 libqt5location5 libqt5opengl5
+  libqt5positioningquick5 libqt5quickwidgets5 libqt5serialport5
+  libqt5webengine-data libqt5webengine5 libqt5webenginecore5
+  libqt5webenginewidgets5 libqt5websockets5 libqt5xmlpatterns5
+  libratpoints-2.1.3 libratpoints-dev librbd1 libre2-9 libreadline8:i386
+  libregf1 libreoffice-nlpsolver libreoffice-script-provider-bsh
+  libreoffice-script-provider-js libreoffice-wiki-publisher librpmbuild9
+  librpmsign9 librw-dev librw0 libsane-hpaio libscca1 libsdl2-image-2.0-0
+  libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libsigscan1 libsingular4-dev
+  libsingular4-dev-common libslirp0 libsmdev1 libsmraw1 libsodium-dev
+  libspice-server1 libsqlite3-0:i386 libstdc++6:i386 libsuperlu-dev
+  libsuperlu-dist-dev libsymmetrica2 libsymmetrica2-dev libtiff5:i386
+  libtrilinos-aztecoo-dev libtrilinos-ml-dev libtrilinos-trilinosss-dev
+  libtrilinos-zoltan-dev libusbredirparser1 libvirglrenderer1 libvirt0
+  libvpx-dev libvshadow1 libvslvm1 libvtk7.1p libvtk7.1p-qt libwebp7:i386
+  libwmf0.2-7 libwnck-3-0 libwnck-3-common libwpe-1.0-1
+  libwpebackend-fdo-1.0-1 libx11-6:i386 libxau6:i386 libxbean-reflect-java
+  libxcb-cursor0 libxcb-render0:i386 libxcb-shm0:i386 libxcb-xtest0
+  libxcb1:i386 libxdmcp6:i386 libxext6:i386 libxml2-dev libxrender1:i386
+  libyaml-dev libz3-4 libz3-dev libzmq3-dev libzn-poly-0.9 libzn-poly-dev
+  linux-headers-6.2.0-33-generic linux-headers-6.2.0-34-generic
+  linux-headers-6.2.0-35-generic linux-headers-6.2.0-36-generic
+  linux-hwe-6.2-headers-6.2.0-33 linux-hwe-6.2-headers-6.2.0-34
+  linux-hwe-6.2-headers-6.2.0-35 linux-hwe-6.2-headers-6.2.0-36
+  linux-image-6.2.0-33-generic linux-image-6.2.0-34-generic
+  linux-image-6.2.0-35-generic linux-image-6.2.0-36-generic
+  linux-modules-6.2.0-33-generic linux-modules-6.2.0-34-generic
+  linux-modules-6.2.0-35-generic linux-modules-6.2.0-36-generic
+  linux-modules-extra-6.2.0-33-generic linux-modules-extra-6.2.0-34-generic
+  linux-modules-extra-6.2.0-35-generic linux-modules-extra-6.2.0-36-generic
+  lsscsi lvm2 metview-data msr-tools ncal node-jed numba-doc
+  ocl-icd-opencl-dev opencl-c-headers opencl-clhpp-headers osinfo-db ovmf
+  paraview-doc ppl-dev primecount-bin primesieve-bin
+  printer-driver-postscript-hp ps2eps pybind11-dev python-gmpy2-common
+  python-mako-doc python-odf-doc python-petsc4py-doc python-ppl-doc
+  python-pyopencl-doc python-tables-data python3-aiofiles python3-ajpy
+  python3-alabaster python3-aniso8601 python3-ansimarkup python3-artifacts
+  python3-asciitree python3-asn1crypto python3-async-timeout python3-automat
+  python3-base58 python3-bleach python3-cloudpickle python3-constantly
+  python3-debconf python3-dfdatetime python3-docutils python3-dropbox
+  python3-ecdsa python3-elasticsearch python3-et-xmlfile python3-fasteners
+  python3-fastimport python3-flatbuffers python3-fsspec python3-fusepy
+  python3-future python3-graphene python3-graphql-core python3-graphql-relay
+  python3-hamcrest python3-heapdict python3-hyperlink python3-imagesize
+  python3-incremental python3-ipy python3-isodatetime python3-itsdangerous
+  python3-jdcal python3-joblib python3-jupyterlab-pygments python3-ldap3
+  python3-ldapdomaindump python3-locket python3-louis python3-mnemonic
+  python3-mock python3-monotonic python3-mutagen python3-networkx python3-nose
+  python3-odf python3-opengl python3-pandocfilters python3-partd
+  python3-passlib python3-pbr python3-pefile python3-pkgconfig python3-png
+  python3-prometheus-client python3-promise python3-pyasn1
+  python3-pyasn1-modules python3-pybind11 python3-pycparser python3-pydot
+  python3-pyinotify python3-pyperclip python3-pyqrcode python3-pyshp
+  python3-pysmi python3-redis python3-roman python3-rx python3-send2trash
+  python3-snowballstemmer python3-sortedcontainers python3-speechd
+  python3-stone python3-suds python3-tblib python3-testpath
+  python3-threadpoolctl python3-tld python3-toolz python3-trie python3-tzlocal
+  python3-u-msgpack python3-websockets python3-werkzeug python3-xdg
+  python3-xkit python3-xlrd python3-xlsxwriter python3-xlwt python3-yaswfp
+  python3-zict qemu-block-extra qemu-system-common qemu-system-data
+  qemu-system-gui qemu-system-x86 qemu-utils qtbase5-dev-tools qtchooser
+  sagemath-doc sasmodels-private-libs scrub seabios sphinx-common supermin
+  swig swig4.0 syslinux syslinux-common texlive-font-utils
+  thin-provisioning-tools trilinos-dev valgrind valgrind-mpi x11-apps
+  x11-session-utils xbrlapi xinit yasm zerofree
+Use 'sudo apt autoremove' to remove them.
+0 to upgrade, 0 to newly install, 0 to remove and 54 not to upgrade.
+==> [2/10] Ensuring Docker can pull images (IPv4/DNS workaround if needed)...
+==> [3/10] Creating lab directory structure at: /home/ian/hpc-lab
+==> [4/10] Writing Docker node image (sshd + sudo + python3)...
+==> [5/10] Writing docker compose cluster (head + compute1 + compute2)...
+==> [6/10] Writing Ansible config + inventory...
+==> [7/10] Writing Ansible playbook...
+==> [8/10] Building and starting the cluster containers...
+Building head
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   2.56kB
+Step 1/8 : FROM ubuntu:22.04
+ ---> 8ea4cbcf3a26
+Step 2/8 : ENV DEBIAN_FRONTEND=noninteractive
+ ---> Running in 80dfe1eda70d
+ ---> Removed intermediate container 80dfe1eda70d
+ ---> 635c4467104a
+Step 3/8 : RUN apt-get update && apt-get install -y     openssh-server sudo python3 ca-certificates     && rm -rf /var/lib/apt/lists/*
+ ---> Running in 7e34689ae945
+Get:1 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Get:2 http://archive.ubuntu.com/ubuntu jammy InRelease [270 kB]
+Get:3 http://security.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1302 kB]
+Get:4 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
+Get:5 http://archive.ubuntu.com/ubuntu jammy-backports InRelease [127 kB]
+Get:6 http://security.ubuntu.com/ubuntu jammy-security/multiverse amd64 Packages [62.6 kB]
+Get:7 http://security.ubuntu.com/ubuntu jammy-security/main amd64 Packages [3772 kB]
+Get:8 http://security.ubuntu.com/ubuntu jammy-security/restricted amd64 Packages [6643 kB]
+Get:9 http://archive.ubuntu.com/ubuntu jammy/multiverse amd64 Packages [266 kB]
+Get:10 http://archive.ubuntu.com/ubuntu jammy/restricted amd64 Packages [164 kB]
+Get:11 http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages [17.5 MB]
+Get:12 http://archive.ubuntu.com/ubuntu jammy/main amd64 Packages [1792 kB]
+Get:13 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [4115 kB]
+Get:14 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1613 kB]
+Get:15 http://archive.ubuntu.com/ubuntu jammy-updates/restricted amd64 Packages [6870 kB]
+Get:16 http://archive.ubuntu.com/ubuntu jammy-updates/multiverse amd64 Packages [70.9 kB]
+Get:17 http://archive.ubuntu.com/ubuntu jammy-backports/universe amd64 Packages [37.2 kB]
+Get:18 http://archive.ubuntu.com/ubuntu jammy-backports/main amd64 Packages [83.9 kB]
+Fetched 44.9 MB in 22s (2055 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  dbus distro-info-data dmsetup gir1.2-glib-2.0 libapparmor1 libargon2-1
+  libbsd0 libcbor0.8 libcryptsetup12 libdbus-1-3 libdevmapper1.02.1 libedit2
+  libexpat1 libfido2-1 libgirepository-1.0-1 libglib2.0-0 libglib2.0-data
+  libicu70 libip4tc2 libjson-c5 libkmod2 libmd0 libmpdec3 libnss-systemd
+  libpam-systemd libpsl5 libpython3-stdlib libpython3.10-minimal
+  libpython3.10-stdlib libreadline8 libsqlite3-0 libwrap0 libx11-6 libx11-data
+  libxau6 libxcb1 libxdmcp6 libxext6 libxml2 libxmuu1 lsb-release media-types
+  ncurses-term networkd-dispatcher openssh-client openssh-sftp-server openssl
+  publicsuffix python3-dbus python3-distro python3-gi python3-minimal
+  python3.10 python3.10-minimal readline-common shared-mime-info ssh-import-id
+  systemd systemd-sysv systemd-timesyncd ucf wget xauth xdg-user-dirs
+Suggested packages:
+  default-dbus-session-bus | dbus-session-bus iw | wireless-tools keychain
+  libpam-ssh monkeysphere ssh-askpass molly-guard ufw python3-doc python3-tk
+  python3-venv python-dbus-doc python3.10-venv python3.10-doc binutils
+  binfmt-support readline-doc systemd-container libtss2-esys-3.0.2-0
+  libtss2-mu0 libtss2-rc0 policykit-1
+The following NEW packages will be installed:
+  ca-certificates dbus distro-info-data dmsetup gir1.2-glib-2.0 libapparmor1
+  libargon2-1 libbsd0 libcbor0.8 libcryptsetup12 libdbus-1-3
+  libdevmapper1.02.1 libedit2 libexpat1 libfido2-1 libgirepository-1.0-1
+  libglib2.0-0 libglib2.0-data libicu70 libip4tc2 libjson-c5 libkmod2 libmd0
+  libmpdec3 libnss-systemd libpam-systemd libpsl5 libpython3-stdlib
+  libpython3.10-minimal libpython3.10-stdlib libreadline8 libsqlite3-0
+  libwrap0 libx11-6 libx11-data libxau6 libxcb1 libxdmcp6 libxext6 libxml2
+  libxmuu1 lsb-release media-types ncurses-term networkd-dispatcher
+  openssh-client openssh-server openssh-sftp-server openssl publicsuffix
+  python3 python3-dbus python3-distro python3-gi python3-minimal python3.10
+  python3.10-minimal readline-common shared-mime-info ssh-import-id sudo
+  systemd systemd-sysv systemd-timesyncd ucf wget xauth xdg-user-dirs
+0 upgraded, 68 newly installed, 0 to remove and 4 not upgraded.
+Need to get 32.0 MB of archives.
+After this operation, 113 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libpython3.10-minimal amd64 3.10.12-1~22.04.14 [816 kB]
+Get:2 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libexpat1 amd64 2.4.7-1ubuntu0.7 [92.1 kB]
+Get:3 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 python3.10-minimal amd64 3.10.12-1~22.04.14 [2275 kB]
+Get:4 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 python3-minimal amd64 3.10.6-1~22.04.1 [24.3 kB]
+Get:5 http://archive.ubuntu.com/ubuntu jammy/main amd64 media-types all 7.0.0 [25.5 kB]
+Get:6 http://archive.ubuntu.com/ubuntu jammy/main amd64 libmpdec3 amd64 2.5.1-2build2 [86.8 kB]
+Get:7 http://archive.ubuntu.com/ubuntu jammy/main amd64 readline-common all 8.1.2-1 [53.5 kB]
+Get:8 http://archive.ubuntu.com/ubuntu jammy/main amd64 libreadline8 amd64 8.1.2-1 [153 kB]
+Get:9 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libsqlite3-0 amd64 3.37.2-2ubuntu0.5 [643 kB]
+Get:10 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libpython3.10-stdlib amd64 3.10.12-1~22.04.14 [1850 kB]
+Get:11 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 python3.10 amd64 3.10.12-1~22.04.14 [509 kB]
+Get:12 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libpython3-stdlib amd64 3.10.6-1~22.04.1 [6812 B]
+Get:13 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 python3 amd64 3.10.6-1~22.04.1 [22.8 kB]
+Get:14 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libapparmor1 amd64 3.0.4-2ubuntu2.5 [39.6 kB]
+Get:15 http://archive.ubuntu.com/ubuntu jammy/main amd64 libargon2-1 amd64 0~20171227-0.3 [19.5 kB]
+Get:16 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libdevmapper1.02.1 amd64 2:1.02.175-2.1ubuntu5 [139 kB]
+Get:17 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libjson-c5 amd64 0.15-3~ubuntu1.22.04.2 [33.5 kB]
+Get:18 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libcryptsetup12 amd64 2:2.4.3-1ubuntu1.3 [211 kB]
+Get:19 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libip4tc2 amd64 1.8.7-1ubuntu5.2 [19.9 kB]
+Get:20 http://archive.ubuntu.com/ubuntu jammy/main amd64 libkmod2 amd64 29-1ubuntu1 [48.0 kB]
+Get:21 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 systemd amd64 249.11-0ubuntu3.17 [4583 kB]
+Get:22 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 systemd-sysv amd64 249.11-0ubuntu3.17 [10.5 kB]
+Get:23 http://archive.ubuntu.com/ubuntu jammy/main amd64 libmd0 amd64 1.0.4-1build1 [23.0 kB]
+Get:24 http://archive.ubuntu.com/ubuntu jammy/main amd64 libbsd0 amd64 0.11.5-1 [44.8 kB]
+Get:25 http://archive.ubuntu.com/ubuntu jammy/main amd64 libedit2 amd64 3.1-20210910-1build1 [96.8 kB]
+Get:26 http://archive.ubuntu.com/ubuntu jammy/main amd64 libcbor0.8 amd64 0.8.0-2ubuntu1 [24.6 kB]
+Get:27 http://archive.ubuntu.com/ubuntu jammy/main amd64 libfido2-1 amd64 1.10.0-1 [82.8 kB]
+Get:28 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 openssh-client amd64 1:8.9p1-3ubuntu0.13 [903 kB]
+Get:29 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 openssh-sftp-server amd64 1:8.9p1-3ubuntu0.13 [38.7 kB]
+Get:30 http://archive.ubuntu.com/ubuntu jammy/main amd64 ucf all 3.0043 [56.1 kB]
+Get:31 http://archive.ubuntu.com/ubuntu jammy/main amd64 libwrap0 amd64 7.6.q-31build2 [47.9 kB]
+Get:32 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 openssh-server amd64 1:8.9p1-3ubuntu0.13 [435 kB]
+Get:33 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 openssl amd64 3.0.2-0ubuntu1.21 [1184 kB]
+Get:34 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ca-certificates all 20240203~22.04.1 [162 kB]
+Get:35 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libdbus-1-3 amd64 1.12.20-2ubuntu4.1 [189 kB]
+Get:36 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 dbus amd64 1.12.20-2ubuntu4.1 [158 kB]
+Get:37 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 distro-info-data all 0.52ubuntu0.11 [5444 B]
+Get:38 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 dmsetup amd64 2:1.02.175-2.1ubuntu5 [81.7 kB]
+Get:39 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libglib2.0-0 amd64 2.72.4-0ubuntu2.9 [1467 kB]
+Get:40 http://archive.ubuntu.com/ubuntu jammy/main amd64 libgirepository-1.0-1 amd64 1.72.0-1 [55.6 kB]
+Get:41 http://archive.ubuntu.com/ubuntu jammy/main amd64 gir1.2-glib-2.0 amd64 1.72.0-1 [164 kB]
+Get:42 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libglib2.0-data all 2.72.4-0ubuntu2.9 [5088 B]
+Get:43 http://archive.ubuntu.com/ubuntu jammy/main amd64 libicu70 amd64 70.1-2 [10.6 MB]
+Get:44 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libnss-systemd amd64 249.11-0ubuntu3.17 [133 kB]
+Get:45 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libpam-systemd amd64 249.11-0ubuntu3.17 [203 kB]
+Get:46 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libxml2 amd64 2.9.13+dfsg-1ubuntu0.11 [765 kB]
+Get:47 http://archive.ubuntu.com/ubuntu jammy/main amd64 lsb-release all 11.1.0ubuntu4 [10.8 kB]
+Get:48 http://archive.ubuntu.com/ubuntu jammy/main amd64 python3-dbus amd64 1.2.18-3build1 [99.5 kB]
+Get:49 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 python3-gi amd64 3.42.1-0ubuntu1 [229 kB]
+Get:50 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 networkd-dispatcher all 2.1-2ubuntu0.22.04.2 [15.8 kB]
+Get:51 http://archive.ubuntu.com/ubuntu jammy/main amd64 shared-mime-info amd64 2.1-2 [454 kB]
+Get:52 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 sudo amd64 1.9.9-1ubuntu2.5 [820 kB]
+Get:53 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 systemd-timesyncd amd64 249.11-0ubuntu3.17 [31.2 kB]
+Get:54 http://archive.ubuntu.com/ubuntu jammy/main amd64 xdg-user-dirs amd64 0.17-2ubuntu4 [53.9 kB]
+Get:55 http://archive.ubuntu.com/ubuntu jammy/main amd64 libpsl5 amd64 0.21.0-1.2build2 [58.4 kB]
+Get:56 http://archive.ubuntu.com/ubuntu jammy/main amd64 libxau6 amd64 1:1.0.9-1build5 [7634 B]
+Get:57 http://archive.ubuntu.com/ubuntu jammy/main amd64 libxdmcp6 amd64 1:1.1.3-0ubuntu5 [10.9 kB]
+Get:58 http://archive.ubuntu.com/ubuntu jammy/main amd64 libxcb1 amd64 1.14-3ubuntu3 [49.0 kB]
+Get:59 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libx11-data all 2:1.7.5-1ubuntu0.3 [120 kB]
+Get:60 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libx11-6 amd64 2:1.7.5-1ubuntu0.3 [667 kB]
+Get:61 http://archive.ubuntu.com/ubuntu jammy/main amd64 libxext6 amd64 2:1.3.4-1build1 [31.8 kB]
+Get:62 http://archive.ubuntu.com/ubuntu jammy/main amd64 libxmuu1 amd64 2:1.1.3-3 [10.2 kB]
+Get:63 http://archive.ubuntu.com/ubuntu jammy/main amd64 publicsuffix all 20211207.1025-1 [129 kB]
+Get:64 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 wget amd64 1.21.2-2ubuntu1.1 [339 kB]
+Get:65 http://archive.ubuntu.com/ubuntu jammy/main amd64 xauth amd64 1:1.1-1build2 [27.5 kB]
+Get:66 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ncurses-term all 6.3-2ubuntu0.1 [267 kB]
+Get:67 http://archive.ubuntu.com/ubuntu jammy/main amd64 python3-distro all 1.7.0-1 [17.0 kB]
+Get:68 http://archive.ubuntu.com/ubuntu jammy/main amd64 ssh-import-id all 5.11-0ubuntu1 [10.1 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 32.0 MB in 13min 45s (38.8 kB/s)
+Selecting previously unselected package libpython3.10-minimal:amd64.
+(Reading database ... 4393 files and directories currently installed.)
+Preparing to unpack .../libpython3.10-minimal_3.10.12-1~22.04.14_amd64.deb ...
+Unpacking libpython3.10-minimal:amd64 (3.10.12-1~22.04.14) ...
+Selecting previously unselected package libexpat1:amd64.
+Preparing to unpack .../libexpat1_2.4.7-1ubuntu0.7_amd64.deb ...
+Unpacking libexpat1:amd64 (2.4.7-1ubuntu0.7) ...
+Selecting previously unselected package python3.10-minimal.
+Preparing to unpack .../python3.10-minimal_3.10.12-1~22.04.14_amd64.deb ...
+Unpacking python3.10-minimal (3.10.12-1~22.04.14) ...
+Setting up libpython3.10-minimal:amd64 (3.10.12-1~22.04.14) ...
+Setting up libexpat1:amd64 (2.4.7-1ubuntu0.7) ...
+Setting up python3.10-minimal (3.10.12-1~22.04.14) ...
+Selecting previously unselected package python3-minimal.
+(Reading database ... 4697 files and directories currently installed.)
+Preparing to unpack .../0-python3-minimal_3.10.6-1~22.04.1_amd64.deb ...
+Unpacking python3-minimal (3.10.6-1~22.04.1) ...
+Selecting previously unselected package media-types.
+Preparing to unpack .../1-media-types_7.0.0_all.deb ...
+Unpacking media-types (7.0.0) ...
+Selecting previously unselected package libmpdec3:amd64.
+Preparing to unpack .../2-libmpdec3_2.5.1-2build2_amd64.deb ...
+Unpacking libmpdec3:amd64 (2.5.1-2build2) ...
+Selecting previously unselected package readline-common.
+Preparing to unpack .../3-readline-common_8.1.2-1_all.deb ...
+Unpacking readline-common (8.1.2-1) ...
+Selecting previously unselected package libreadline8:amd64.
+Preparing to unpack .../4-libreadline8_8.1.2-1_amd64.deb ...
+Unpacking libreadline8:amd64 (8.1.2-1) ...
+Selecting previously unselected package libsqlite3-0:amd64.
+Preparing to unpack .../5-libsqlite3-0_3.37.2-2ubuntu0.5_amd64.deb ...
+Unpacking libsqlite3-0:amd64 (3.37.2-2ubuntu0.5) ...
+Selecting previously unselected package libpython3.10-stdlib:amd64.
+Preparing to unpack .../6-libpython3.10-stdlib_3.10.12-1~22.04.14_amd64.deb ...
+Unpacking libpython3.10-stdlib:amd64 (3.10.12-1~22.04.14) ...
+Selecting previously unselected package python3.10.
+Preparing to unpack .../7-python3.10_3.10.12-1~22.04.14_amd64.deb ...
+Unpacking python3.10 (3.10.12-1~22.04.14) ...
+Selecting previously unselected package libpython3-stdlib:amd64.
+Preparing to unpack .../8-libpython3-stdlib_3.10.6-1~22.04.1_amd64.deb ...
+Unpacking libpython3-stdlib:amd64 (3.10.6-1~22.04.1) ...
+Setting up python3-minimal (3.10.6-1~22.04.1) ...
+Selecting previously unselected package python3.
+(Reading database ... 5127 files and directories currently installed.)
+Preparing to unpack .../0-python3_3.10.6-1~22.04.1_amd64.deb ...
+Unpacking python3 (3.10.6-1~22.04.1) ...
+Selecting previously unselected package libapparmor1:amd64.
+Preparing to unpack .../1-libapparmor1_3.0.4-2ubuntu2.5_amd64.deb ...
+Unpacking libapparmor1:amd64 (3.0.4-2ubuntu2.5) ...
+Selecting previously unselected package libargon2-1:amd64.
+Preparing to unpack .../2-libargon2-1_0~20171227-0.3_amd64.deb ...
+Unpacking libargon2-1:amd64 (0~20171227-0.3) ...
+Selecting previously unselected package libdevmapper1.02.1:amd64.
+Preparing to unpack .../3-libdevmapper1.02.1_2%3a1.02.175-2.1ubuntu5_amd64.deb ...
+Unpacking libdevmapper1.02.1:amd64 (2:1.02.175-2.1ubuntu5) ...
+Selecting previously unselected package libjson-c5:amd64.
+Preparing to unpack .../4-libjson-c5_0.15-3~ubuntu1.22.04.2_amd64.deb ...
+Unpacking libjson-c5:amd64 (0.15-3~ubuntu1.22.04.2) ...
+Selecting previously unselected package libcryptsetup12:amd64.
+Preparing to unpack .../5-libcryptsetup12_2%3a2.4.3-1ubuntu1.3_amd64.deb ...
+Unpacking libcryptsetup12:amd64 (2:2.4.3-1ubuntu1.3) ...
+Selecting previously unselected package libip4tc2:amd64.
+Preparing to unpack .../6-libip4tc2_1.8.7-1ubuntu5.2_amd64.deb ...
+Unpacking libip4tc2:amd64 (1.8.7-1ubuntu5.2) ...
+Selecting previously unselected package libkmod2:amd64.
+Preparing to unpack .../7-libkmod2_29-1ubuntu1_amd64.deb ...
+Unpacking libkmod2:amd64 (29-1ubuntu1) ...
+Selecting previously unselected package systemd.
+Preparing to unpack .../8-systemd_249.11-0ubuntu3.17_amd64.deb ...
+Unpacking systemd (249.11-0ubuntu3.17) ...
+Setting up libapparmor1:amd64 (3.0.4-2ubuntu2.5) ...
+Setting up libargon2-1:amd64 (0~20171227-0.3) ...
+Setting up libdevmapper1.02.1:amd64 (2:1.02.175-2.1ubuntu5) ...
+Setting up libjson-c5:amd64 (0.15-3~ubuntu1.22.04.2) ...
+Setting up libcryptsetup12:amd64 (2:2.4.3-1ubuntu1.3) ...
+Setting up libip4tc2:amd64 (1.8.7-1ubuntu5.2) ...
+Setting up libkmod2:amd64 (29-1ubuntu1) ...
+Setting up systemd (249.11-0ubuntu3.17) ...
+Created symlink /etc/systemd/system/getty.target.wants/getty@tty1.service → /lib/systemd/system/getty@.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/remote-fs.target → /lib/systemd/system/remote-fs.target.
+Created symlink /etc/systemd/system/dbus-org.freedesktop.resolve1.service → /lib/systemd/system/systemd-resolved.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/systemd-resolved.service → /lib/systemd/system/systemd-resolved.service.
+ln: failed to create symbolic link '/etc/resolv.conf': Device or resource busy
+Created symlink /etc/systemd/system/sysinit.target.wants/systemd-pstore.service → /lib/systemd/system/systemd-pstore.service.
+Initializing machine ID from random generator.
+Selecting previously unselected package systemd-sysv.
+(Reading database ... 5966 files and directories currently installed.)
+Preparing to unpack .../00-systemd-sysv_249.11-0ubuntu3.17_amd64.deb ...
+Unpacking systemd-sysv (249.11-0ubuntu3.17) ...
+Selecting previously unselected package libmd0:amd64.
+Preparing to unpack .../01-libmd0_1.0.4-1build1_amd64.deb ...
+Unpacking libmd0:amd64 (1.0.4-1build1) ...
+Selecting previously unselected package libbsd0:amd64.
+Preparing to unpack .../02-libbsd0_0.11.5-1_amd64.deb ...
+Unpacking libbsd0:amd64 (0.11.5-1) ...
+Selecting previously unselected package libedit2:amd64.
+Preparing to unpack .../03-libedit2_3.1-20210910-1build1_amd64.deb ...
+Unpacking libedit2:amd64 (3.1-20210910-1build1) ...
+Selecting previously unselected package libcbor0.8:amd64.
+Preparing to unpack .../04-libcbor0.8_0.8.0-2ubuntu1_amd64.deb ...
+Unpacking libcbor0.8:amd64 (0.8.0-2ubuntu1) ...
+Selecting previously unselected package libfido2-1:amd64.
+Preparing to unpack .../05-libfido2-1_1.10.0-1_amd64.deb ...
+Unpacking libfido2-1:amd64 (1.10.0-1) ...
+Selecting previously unselected package openssh-client.
+Preparing to unpack .../06-openssh-client_1%3a8.9p1-3ubuntu0.13_amd64.deb ...
+Unpacking openssh-client (1:8.9p1-3ubuntu0.13) ...
+Selecting previously unselected package openssh-sftp-server.
+Preparing to unpack .../07-openssh-sftp-server_1%3a8.9p1-3ubuntu0.13_amd64.deb ...
+Unpacking openssh-sftp-server (1:8.9p1-3ubuntu0.13) ...
+Selecting previously unselected package ucf.
+Preparing to unpack .../08-ucf_3.0043_all.deb ...
+Moving old data out of the way
+Unpacking ucf (3.0043) ...
+Selecting previously unselected package libwrap0:amd64.
+Preparing to unpack .../09-libwrap0_7.6.q-31build2_amd64.deb ...
+Unpacking libwrap0:amd64 (7.6.q-31build2) ...
+Selecting previously unselected package openssh-server.
+Preparing to unpack .../10-openssh-server_1%3a8.9p1-3ubuntu0.13_amd64.deb ...
+Unpacking openssh-server (1:8.9p1-3ubuntu0.13) ...
+Selecting previously unselected package openssl.
+Preparing to unpack .../11-openssl_3.0.2-0ubuntu1.21_amd64.deb ...
+Unpacking openssl (3.0.2-0ubuntu1.21) ...
+Selecting previously unselected package ca-certificates.
+Preparing to unpack .../12-ca-certificates_20240203~22.04.1_all.deb ...
+Unpacking ca-certificates (20240203~22.04.1) ...
+Selecting previously unselected package libdbus-1-3:amd64.
+Preparing to unpack .../13-libdbus-1-3_1.12.20-2ubuntu4.1_amd64.deb ...
+Unpacking libdbus-1-3:amd64 (1.12.20-2ubuntu4.1) ...
+Selecting previously unselected package dbus.
+Preparing to unpack .../14-dbus_1.12.20-2ubuntu4.1_amd64.deb ...
+Unpacking dbus (1.12.20-2ubuntu4.1) ...
+Selecting previously unselected package distro-info-data.
+Preparing to unpack .../15-distro-info-data_0.52ubuntu0.11_all.deb ...
+Unpacking distro-info-data (0.52ubuntu0.11) ...
+Selecting previously unselected package dmsetup.
+Preparing to unpack .../16-dmsetup_2%3a1.02.175-2.1ubuntu5_amd64.deb ...
+Unpacking dmsetup (2:1.02.175-2.1ubuntu5) ...
+Selecting previously unselected package libglib2.0-0:amd64.
+Preparing to unpack .../17-libglib2.0-0_2.72.4-0ubuntu2.9_amd64.deb ...
+Unpacking libglib2.0-0:amd64 (2.72.4-0ubuntu2.9) ...
+Selecting previously unselected package libgirepository-1.0-1:amd64.
+Preparing to unpack .../18-libgirepository-1.0-1_1.72.0-1_amd64.deb ...
+Unpacking libgirepository-1.0-1:amd64 (1.72.0-1) ...
+Selecting previously unselected package gir1.2-glib-2.0:amd64.
+Preparing to unpack .../19-gir1.2-glib-2.0_1.72.0-1_amd64.deb ...
+Unpacking gir1.2-glib-2.0:amd64 (1.72.0-1) ...
+Selecting previously unselected package libglib2.0-data.
+Preparing to unpack .../20-libglib2.0-data_2.72.4-0ubuntu2.9_all.deb ...
+Unpacking libglib2.0-data (2.72.4-0ubuntu2.9) ...
+Selecting previously unselected package libicu70:amd64.
+Preparing to unpack .../21-libicu70_70.1-2_amd64.deb ...
+Unpacking libicu70:amd64 (70.1-2) ...
+Selecting previously unselected package libnss-systemd:amd64.
+Preparing to unpack .../22-libnss-systemd_249.11-0ubuntu3.17_amd64.deb ...
+Unpacking libnss-systemd:amd64 (249.11-0ubuntu3.17) ...
+Selecting previously unselected package libpam-systemd:amd64.
+Preparing to unpack .../23-libpam-systemd_249.11-0ubuntu3.17_amd64.deb ...
+Unpacking libpam-systemd:amd64 (249.11-0ubuntu3.17) ...
+Selecting previously unselected package libxml2:amd64.
+Preparing to unpack .../24-libxml2_2.9.13+dfsg-1ubuntu0.11_amd64.deb ...
+Unpacking libxml2:amd64 (2.9.13+dfsg-1ubuntu0.11) ...
+Selecting previously unselected package lsb-release.
+Preparing to unpack .../25-lsb-release_11.1.0ubuntu4_all.deb ...
+Unpacking lsb-release (11.1.0ubuntu4) ...
+Selecting previously unselected package python3-dbus.
+Preparing to unpack .../26-python3-dbus_1.2.18-3build1_amd64.deb ...
+Unpacking python3-dbus (1.2.18-3build1) ...
+Selecting previously unselected package python3-gi.
+Preparing to unpack .../27-python3-gi_3.42.1-0ubuntu1_amd64.deb ...
+Unpacking python3-gi (3.42.1-0ubuntu1) ...
+Selecting previously unselected package networkd-dispatcher.
+Preparing to unpack .../28-networkd-dispatcher_2.1-2ubuntu0.22.04.2_all.deb ...
+Unpacking networkd-dispatcher (2.1-2ubuntu0.22.04.2) ...
+Selecting previously unselected package shared-mime-info.
+Preparing to unpack .../29-shared-mime-info_2.1-2_amd64.deb ...
+Unpacking shared-mime-info (2.1-2) ...
+Selecting previously unselected package sudo.
+Preparing to unpack .../30-sudo_1.9.9-1ubuntu2.5_amd64.deb ...
+Unpacking sudo (1.9.9-1ubuntu2.5) ...
+Selecting previously unselected package systemd-timesyncd.
+Preparing to unpack .../31-systemd-timesyncd_249.11-0ubuntu3.17_amd64.deb ...
+Unpacking systemd-timesyncd (249.11-0ubuntu3.17) ...
+Selecting previously unselected package xdg-user-dirs.
+Preparing to unpack .../32-xdg-user-dirs_0.17-2ubuntu4_amd64.deb ...
+Unpacking xdg-user-dirs (0.17-2ubuntu4) ...
+Selecting previously unselected package libpsl5:amd64.
+Preparing to unpack .../33-libpsl5_0.21.0-1.2build2_amd64.deb ...
+Unpacking libpsl5:amd64 (0.21.0-1.2build2) ...
+Selecting previously unselected package libxau6:amd64.
+Preparing to unpack .../34-libxau6_1%3a1.0.9-1build5_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.9-1build5) ...
+Selecting previously unselected package libxdmcp6:amd64.
+Preparing to unpack .../35-libxdmcp6_1%3a1.1.3-0ubuntu5_amd64.deb ...
+Unpacking libxdmcp6:amd64 (1:1.1.3-0ubuntu5) ...
+Selecting previously unselected package libxcb1:amd64.
+Preparing to unpack .../36-libxcb1_1.14-3ubuntu3_amd64.deb ...
+Unpacking libxcb1:amd64 (1.14-3ubuntu3) ...
+Selecting previously unselected package libx11-data.
+Preparing to unpack .../37-libx11-data_2%3a1.7.5-1ubuntu0.3_all.deb ...
+Unpacking libx11-data (2:1.7.5-1ubuntu0.3) ...
+Selecting previously unselected package libx11-6:amd64.
+Preparing to unpack .../38-libx11-6_2%3a1.7.5-1ubuntu0.3_amd64.deb ...
+Unpacking libx11-6:amd64 (2:1.7.5-1ubuntu0.3) ...
+Selecting previously unselected package libxext6:amd64.
+Preparing to unpack .../39-libxext6_2%3a1.3.4-1build1_amd64.deb ...
+Unpacking libxext6:amd64 (2:1.3.4-1build1) ...
+Selecting previously unselected package libxmuu1:amd64.
+Preparing to unpack .../40-libxmuu1_2%3a1.1.3-3_amd64.deb ...
+Unpacking libxmuu1:amd64 (2:1.1.3-3) ...
+Selecting previously unselected package publicsuffix.
+Preparing to unpack .../41-publicsuffix_20211207.1025-1_all.deb ...
+Unpacking publicsuffix (20211207.1025-1) ...
+Selecting previously unselected package wget.
+Preparing to unpack .../42-wget_1.21.2-2ubuntu1.1_amd64.deb ...
+Unpacking wget (1.21.2-2ubuntu1.1) ...
+Selecting previously unselected package xauth.
+Preparing to unpack .../43-xauth_1%3a1.1-1build2_amd64.deb ...
+Unpacking xauth (1:1.1-1build2) ...
+Selecting previously unselected package ncurses-term.
+Preparing to unpack .../44-ncurses-term_6.3-2ubuntu0.1_all.deb ...
+Unpacking ncurses-term (6.3-2ubuntu0.1) ...
+Selecting previously unselected package python3-distro.
+Preparing to unpack .../45-python3-distro_1.7.0-1_all.deb ...
+Unpacking python3-distro (1.7.0-1) ...
+Selecting previously unselected package ssh-import-id.
+Preparing to unpack .../46-ssh-import-id_5.11-0ubuntu1_all.deb ...
+Unpacking ssh-import-id (5.11-0ubuntu1) ...
+Setting up media-types (7.0.0) ...
+Setting up systemd-sysv (249.11-0ubuntu3.17) ...
+Setting up libxau6:amd64 (1:1.0.9-1build5) ...
+Setting up libpsl5:amd64 (0.21.0-1.2build2) ...
+Setting up wget (1.21.2-2ubuntu1.1) ...
+Setting up xdg-user-dirs (0.17-2ubuntu4) ...
+Setting up libglib2.0-0:amd64 (2.72.4-0ubuntu2.9) ...
+No schema files found: doing nothing.
+Setting up distro-info-data (0.52ubuntu0.11) ...
+Setting up libcbor0.8:amd64 (0.8.0-2ubuntu1) ...
+Setting up libsqlite3-0:amd64 (3.37.2-2ubuntu0.5) ...
+Setting up libnss-systemd:amd64 (249.11-0ubuntu3.17) ...
+First installation detected...
+Checking NSS setup...
+Setting up libglib2.0-data (2.72.4-0ubuntu2.9) ...
+Setting up libwrap0:amd64 (7.6.q-31build2) ...
+Setting up libx11-data (2:1.7.5-1ubuntu0.3) ...
+Setting up libdbus-1-3:amd64 (1.12.20-2ubuntu4.1) ...
+Setting up dbus (1.12.20-2ubuntu4.1) ...
+Setting up systemd-timesyncd (249.11-0ubuntu3.17) ...
+Created symlink /etc/systemd/system/dbus-org.freedesktop.timesync1.service → /lib/systemd/system/systemd-timesyncd.service.
+Created symlink /etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service → /lib/systemd/system/systemd-timesyncd.service.
+Setting up sudo (1.9.9-1ubuntu2.5) ...
+Setting up ucf (3.0043) ...
+Setting up libmd0:amd64 (1.0.4-1build1) ...
+Setting up dmsetup (2:1.02.175-2.1ubuntu5) ...
+Setting up libmpdec3:amd64 (2.5.1-2build2) ...
+Setting up libpam-systemd:amd64 (249.11-0ubuntu3.17) ...
+Setting up libgirepository-1.0-1:amd64 (1.72.0-1) ...
+Setting up libfido2-1:amd64 (1.10.0-1) ...
+Setting up openssl (3.0.2-0ubuntu1.21) ...
+Setting up libbsd0:amd64 (0.11.5-1) ...
+Setting up readline-common (8.1.2-1) ...
+Setting up publicsuffix (20211207.1025-1) ...
+Setting up libicu70:amd64 (70.1-2) ...
+Setting up ncurses-term (6.3-2ubuntu0.1) ...
+Setting up libxdmcp6:amd64 (1:1.1.3-0ubuntu5) ...
+Setting up libxcb1:amd64 (1.14-3ubuntu3) ...
+Setting up libedit2:amd64 (3.1-20210910-1build1) ...
+Setting up libreadline8:amd64 (8.1.2-1) ...
+Setting up libpython3.10-stdlib:amd64 (3.10.12-1~22.04.14) ...
+Setting up ca-certificates (20240203~22.04.1) ...
+Updating certificates in /etc/ssl/certs...
+146 added, 0 removed; done.
+Setting up gir1.2-glib-2.0:amd64 (1.72.0-1) ...
+Setting up libx11-6:amd64 (2:1.7.5-1ubuntu0.3) ...
+Setting up libxml2:amd64 (2.9.13+dfsg-1ubuntu0.11) ...
+Setting up libxmuu1:amd64 (2:1.1.3-3) ...
+Setting up libpython3-stdlib:amd64 (3.10.6-1~22.04.1) ...
+Setting up python3.10 (3.10.12-1~22.04.14) ...
+Setting up openssh-client (1:8.9p1-3ubuntu0.13) ...
+update-alternatives: using /usr/bin/ssh to provide /usr/bin/rsh (rsh) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/rsh.1.gz because associated file /usr/share/man/man1/ssh.1.gz (of link group rsh) doesn't exist
+update-alternatives: using /usr/bin/slogin to provide /usr/bin/rlogin (rlogin) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/rlogin.1.gz because associated file /usr/share/man/man1/slogin.1.gz (of link group rlogin) doesn't exist
+update-alternatives: using /usr/bin/scp to provide /usr/bin/rcp (rcp) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/rcp.1.gz because associated file /usr/share/man/man1/scp.1.gz (of link group rcp) doesn't exist
+Setting up libxext6:amd64 (2:1.3.4-1build1) ...
+Setting up python3 (3.10.6-1~22.04.1) ...
+Setting up python3-gi (3.42.1-0ubuntu1) ...
+Setting up shared-mime-info (2.1-2) ...
+Setting up xauth (1:1.1-1build2) ...
+Setting up lsb-release (11.1.0ubuntu4) ...
+Setting up openssh-sftp-server (1:8.9p1-3ubuntu0.13) ...
+Setting up python3-dbus (1.2.18-3build1) ...
+Setting up python3-distro (1.7.0-1) ...
+Setting up openssh-server (1:8.9p1-3ubuntu0.13) ...
+
+Creating config file /etc/ssh/sshd_config with new version
+Creating SSH2 RSA key; this may take some time ...
+3072 SHA256:6CkZzbpOJCWv2fP2x1LZbXRN8RJeapPjOgVLmJGWsVY root@7e34689ae945 (RSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:bkITBqOvMLvcXy0QQlkZ8ObMxP8ECywnU3IJ+3ES0Fk root@7e34689ae945 (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:7XmjSWuGc9H30zKP1IDil/ulXJNwFdEPi4ibKOnHSVk root@7e34689ae945 (ED25519)
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Created symlink /etc/systemd/system/sshd.service → /lib/systemd/system/ssh.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/ssh.service → /lib/systemd/system/ssh.service.
+Setting up ssh-import-id (5.11-0ubuntu1) ...
+Setting up networkd-dispatcher (2.1-2ubuntu0.22.04.2) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/networkd-dispatcher.service → /lib/systemd/system/networkd-dispatcher.service.
+Processing triggers for libc-bin (2.35-0ubuntu3.13) ...
+Processing triggers for ca-certificates (20240203~22.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+ ---> Removed intermediate container 7e34689ae945
+ ---> 5d0107179e13
+Step 4/8 : RUN mkdir -p /var/run/sshd
+ ---> Running in edc65a6283da
+ ---> Removed intermediate container edc65a6283da
+ ---> e20a500da353
+Step 5/8 : RUN useradd -m -s /bin/bash ansible     && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible     && chmod 440 /etc/sudoers.d/ansible
+ ---> Running in f10fb81f141a
+ ---> Removed intermediate container f10fb81f141a
+ ---> aa81b612abf5
+Step 6/8 : RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config  && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config  && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+ ---> Running in 07c1552559ac
+ ---> Removed intermediate container 07c1552559ac
+ ---> fb7826185a5b
+Step 7/8 : EXPOSE 22
+ ---> Running in 18b23ff1a50d
+ ---> Removed intermediate container 18b23ff1a50d
+ ---> 2b5d7663b773
+Step 8/8 : CMD ["/usr/sbin/sshd","-D","-e"]
+ ---> Running in d702cc3f9be6
+ ---> Removed intermediate container d702cc3f9be6
+ ---> 9bec9f4024cf
+Successfully built 9bec9f4024cf
+Successfully tagged hpc-lab_head:latest
+Building compute1
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   2.56kB
+Step 1/8 : FROM ubuntu:22.04
+ ---> 8ea4cbcf3a26
+Step 2/8 : ENV DEBIAN_FRONTEND=noninteractive
+ ---> Using cache
+ ---> 635c4467104a
+Step 3/8 : RUN apt-get update && apt-get install -y     openssh-server sudo python3 ca-certificates     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 5d0107179e13
+Step 4/8 : RUN mkdir -p /var/run/sshd
+ ---> Using cache
+ ---> e20a500da353
+Step 5/8 : RUN useradd -m -s /bin/bash ansible     && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible     && chmod 440 /etc/sudoers.d/ansible
+ ---> Using cache
+ ---> aa81b612abf5
+Step 6/8 : RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config  && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config  && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+ ---> Using cache
+ ---> fb7826185a5b
+Step 7/8 : EXPOSE 22
+ ---> Using cache
+ ---> 2b5d7663b773
+Step 8/8 : CMD ["/usr/sbin/sshd","-D","-e"]
+ ---> Using cache
+ ---> 9bec9f4024cf
+Successfully built 9bec9f4024cf
+Successfully tagged hpc-lab_compute1:latest
+Building compute2
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   2.56kB
+Step 1/8 : FROM ubuntu:22.04
+ ---> 8ea4cbcf3a26
+Step 2/8 : ENV DEBIAN_FRONTEND=noninteractive
+ ---> Using cache
+ ---> 635c4467104a
+Step 3/8 : RUN apt-get update && apt-get install -y     openssh-server sudo python3 ca-certificates     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 5d0107179e13
+Step 4/8 : RUN mkdir -p /var/run/sshd
+ ---> Using cache
+ ---> e20a500da353
+Step 5/8 : RUN useradd -m -s /bin/bash ansible     && echo "ansible ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/ansible     && chmod 440 /etc/sudoers.d/ansible
+ ---> Using cache
+ ---> aa81b612abf5
+Step 6/8 : RUN sed -i 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config  && sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config  && sed -i 's/^UsePAM.*/UsePAM no/' /etc/ssh/sshd_config
+ ---> Using cache
+ ---> fb7826185a5b
+Step 7/8 : EXPOSE 22
+ ---> Using cache
+ ---> 2b5d7663b773
+Step 8/8 : CMD ["/usr/sbin/sshd","-D","-e"]
+ ---> Using cache
+ ---> 9bec9f4024cf
+Successfully built 9bec9f4024cf
+Successfully tagged hpc-lab_compute2:latest
+Creating hpc-compute1 ... done
+Creating hpc-head     ... done
+Creating hpc-compute2 ... done
+==> Waiting briefly for sshd to come up on nodes...
+==> [9/10] Setting up SSH key on THIS machine for Ansible -> containers...
+Generating public/private ed25519 key pair.
+Your identification has been saved in /home/ian/.ssh/id_ed25519
+Your public key has been saved in /home/ian/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:YM5Zk0PqR45KTsO9EuPW46x0bcd/QAznW8c/e2gCIZ8 ian@ian-HP-Convertible-x360-11-ab1XX
+The key's randomart image is:
++--[ED25519 256]--+
+|        .        |
+|       o .. .    |
+|      + *  =   . |
+|   . * B.o. + . o|
+|    B B So + o ..|
+|   = * + .E o  ..|
+|    B = o o. . .o|
+|   o = o . .. +..|
+|    ..o     .+  .|
++----[SHA256]-----+
+==> Installing your public key into each container's ansible account...
+Warning: Permanently added '[127.0.0.1]:2221' (ED25519) to the list of known hosts.
+ansible@127.0.0.1: Permission denied (publickey).
+ian@ian-HP-Convertible-x360-11-ab1XX:~$ ^
